@@ -5,7 +5,7 @@
  *  through the same helpers the Integrations sheet uses, so a connection made
  *  from chat behaves exactly like one made from settings.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Loader2, Plug, Server } from "lucide-react";
 import { toast } from "sonner";
 import type { ConnectSpec } from "@/lib/chat/connectCardParser";
