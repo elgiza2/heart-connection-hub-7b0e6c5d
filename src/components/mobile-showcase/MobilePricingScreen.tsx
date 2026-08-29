@@ -419,7 +419,7 @@ export default function MobilePricingScreen({
             </Link>
           </nav>
         </div>
-      </div>
+      </main>
 
     </div>
   );
