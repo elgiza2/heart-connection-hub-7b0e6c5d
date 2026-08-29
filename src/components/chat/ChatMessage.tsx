@@ -83,7 +83,6 @@ import {
   ChainOfThoughtItem,
 } from "@/components/prompt-kit/chain-of-thought";
 import { Message, MessageContent } from "@/components/prompt-kit/message";
-import { ToolCard } from "@/pages/chat/components/aui/ToolCard";
 import ThinkingTrace from "./ThinkingTrace";
 import { estimateTokens, formatTokens } from "@/pages/chat/utils/estimateTokens";
 
