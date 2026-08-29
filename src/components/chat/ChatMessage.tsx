@@ -1255,9 +1255,12 @@ const ChatMessage = ({
                   onContextMenu={handleContextMenu}
                   onTouchStart={handleLongPressStart}
                   onTouchEnd={clearLongPress}
-                  onTouchMove={clearLongPress}
+                  onTouchMove={handleLongPressMove}
                   onTouchCancel={clearLongPress}
-                  onClick={handleBubbleClick}
+                  onClick={(e) => {
+                    handleBubbleClick(e);
+                    handleBubbleTap();
+                  }}
                   style={{
                     background: "var(--user-bubble, #2563eb)",
                     color: "var(--user-bubble-text, #ffffff)",
