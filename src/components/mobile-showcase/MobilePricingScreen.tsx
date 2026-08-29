@@ -254,7 +254,7 @@ export default function MobilePricingScreen({
         />
       </header>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[400px] flex-1 flex-col px-5">
+      <main className="relative z-10 mx-auto flex w-full max-w-[400px] flex-1 flex-col px-5">
         {/* Megsy star mark */}
         <div
           className={`mps-rise flex justify-center ${compact ? "mt-[2%]" : "mt-[4%]"}`}
