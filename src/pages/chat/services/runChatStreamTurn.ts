@@ -670,6 +670,9 @@ export async function runChatStreamTurn(opts: RunChatStreamTurnOptions): Promise
           researchTrace.push(normalizedStatus);
         }
         setSearchStatus(normalizedStatus);
+        // Every status also lands in the live activity log so the thinking
+        // badge can be expanded to see what actually happened this turn.
+        pushNarration(normalizedStatus);
         setIsThinking(true);
       }
     },
