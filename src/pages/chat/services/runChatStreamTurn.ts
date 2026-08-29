@@ -715,6 +715,8 @@ export async function runChatStreamTurn(opts: RunChatStreamTurnOptions): Promise
           const taskId = String(
             payload.call_id || `${payload.name || "tool"}-${Date.now()}-${Math.random()}`,
           );
+          pushNarration(`→ ${prettyToolLabel(payload.name, payload.target)}`);
+          setSearchStatus(prettyToolLabel(payload.name, payload.target));
           setToolActivity({
             name: String(payload.name || ""),
             appSlug: payload.app_slug,
