@@ -81,7 +81,7 @@ export function ServiceProgress({
             key={step.id}
             className={cn(
               "flex items-start gap-2.5 rounded-lg px-2 py-1.5 transition-colors",
-              step.state === "active" && "bg-white/[0.04]",
+              step.state === "active" && "bg-foreground/[0.04]",
             )}
           >
             <span
@@ -89,7 +89,7 @@ export function ServiceProgress({
                 "mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border shrink-0",
                 step.state === "done" && ACCENT[accent],
                 step.state === "active" && ACCENT[accent],
-                step.state === "pending" && "border-foreground/15 bg-white/[0.03] text-foreground/65",
+                step.state === "pending" && "border-foreground/15 bg-foreground/[0.03] text-foreground/65",
                 step.state === "error" && "border-red-500/40 bg-red-500/15 text-red-400",
               )}
             >

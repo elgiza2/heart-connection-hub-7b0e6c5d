@@ -301,7 +301,7 @@ export default function MobileAuthExtras(p: Props) {
                       type="button"
                       onClick={p.onResendOtp}
                       disabled={p.isSubmitting}
-                      className="text-[13px] text-foreground/85 underline underline-offset-4 decoration-white/25 disabled:opacity-50"
+                      className="text-[13px] text-foreground/85 underline underline-offset-4 decoration-foreground/25 disabled:opacity-50"
                     >
                       {authT("resendCode")}
                     </button>

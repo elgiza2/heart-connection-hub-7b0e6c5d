@@ -178,7 +178,7 @@ export default function MobileAuthFlow(p: Props) {
                         <button
                           type="button"
                           onClick={p.onForgotPassword}
-                          className="text-[12px] text-foreground/55 hover:text-foreground/85 underline underline-offset-4 decoration-white/20 transition-colors"
+                          className="text-[12px] text-foreground/55 hover:text-foreground/85 underline underline-offset-4 decoration-foreground/20 transition-colors"
                         >
                           {authT("forgotPasswordQ")}
                         </button>

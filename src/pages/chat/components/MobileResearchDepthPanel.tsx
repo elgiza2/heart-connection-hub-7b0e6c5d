@@ -33,7 +33,7 @@ export function MobileResearchDepthPanel({ researchDepth, setResearchDepth, user
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
     >
-      <div className="overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.03]">
+      <div className="overflow-hidden rounded-2xl border border-foreground/[0.08] bg-foreground/[0.03]">
         {DEPTH_OPTIONS.map(({ id, label, description, pro }) => {
           const active = researchDepth === id;
           const locked = !!pro && !paid;
@@ -49,7 +49,7 @@ export function MobileResearchDepthPanel({ researchDepth, setResearchDepth, user
                 setResearchDepth(id);
                 onSelect?.();
               }}
-              className={`flex w-full items-center gap-3 px-4 py-3.5 text-start border-t border-white/[0.05] first:border-t-0 transition-colors ${active ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"}`}
+              className={`flex w-full items-center gap-3 px-4 py-3.5 text-start border-t border-foreground/[0.05] first:border-t-0 transition-colors ${active ? "bg-foreground/[0.04]" : "hover:bg-foreground/[0.02]"}`}
             >
               <span className="min-w-0 flex-1">
                 <span className="block text-[15px] font-semibold text-foreground">{label}</span>

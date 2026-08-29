@@ -513,8 +513,8 @@ const PricingPage = () => {
         html[data-theme="light"] [data-pricing-scope] [class*="text-foreground/"] { color: hsl(var(--foreground)) !important; }
         html[data-theme="light"] [data-pricing-scope] .bg-background,
         html[data-theme="light"] [data-pricing-scope] [class*="bg-background/"] { background-color: hsl(var(--background)) !important; }
-        html[data-theme="light"] [data-pricing-scope] [class*="bg-white/"] { background-color: hsl(var(--muted)) !important; }
-        html[data-theme="light"] [data-pricing-scope] [class*="border-white/"] { border-color: hsl(var(--border)) !important; }
+        html[data-theme="light"] [data-pricing-scope] [class*="bg-foreground/"] { background-color: hsl(var(--muted)) !important; }
+        html[data-theme="light"] [data-pricing-scope] [class*="border-foreground/"] { border-color: hsl(var(--border)) !important; }
         html[data-theme="light"] [data-pricing-scope] .liquid-glass {
           background: hsl(var(--card)) !important;
           box-shadow: 0 1px 2px rgba(0,0,0,0.04), inset 0 0 0 1px hsl(var(--border)) !important;
@@ -956,7 +956,7 @@ const PricingPage = () => {
                       type="button"
                       onClick={() => handleSubscribe(p.tier)}
                       disabled={loadingTier !== null || isCurrent}
-                      className={`liquid-glass w-full py-3.5 rounded-full text-xs uppercase font-normal text-foreground disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 ${isElite ? "bg-white/[0.04]" : ""}`}
+                      className={`liquid-glass w-full py-3.5 rounded-full text-xs uppercase font-normal text-foreground disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2 ${isElite ? "bg-foreground/[0.04]" : ""}`}
                       style={{ letterSpacing: "0.2em" }}
                     >
                       {loadingTier === p.tier ? (

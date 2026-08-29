@@ -17,7 +17,7 @@ export default function EmptyConnectors({
         <button
           type="button"
           onClick={onAction}
-          className="rounded-[12px] bg-white/[0.08] px-4 py-2 text-[13px] text-foreground/80"
+          className="rounded-[12px] bg-foreground/[0.08] px-4 py-2 text-[13px] text-foreground/80"
           style={{ border: 0 }}
         >
           {actionLabel}

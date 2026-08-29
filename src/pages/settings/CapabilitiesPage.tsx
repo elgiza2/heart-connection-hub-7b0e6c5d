@@ -74,7 +74,7 @@ export default function CapabilitiesPage() {
     const cls = [
       "flex items-center w-full text-left px-4",
       "py-[14px]",
-      last ? "" : "border-b border-white/[0.05]",
+      last ? "" : "border-b border-foreground/[0.05]",
     ].join(" ");
     return onClick ? (
       <button type="button" onClick={onClick} className={cls}>
@@ -105,7 +105,7 @@ export default function CapabilitiesPage() {
         onClick={() => update("toolAccess", value)}
         className={[
           "flex items-center w-full text-left px-4 py-[14px]",
-          last ? "" : "border-b border-white/[0.05]",
+          last ? "" : "border-b border-foreground/[0.05]",
         ].join(" ")}
       >
         <div className="flex-1 min-w-0 pr-3">
@@ -136,7 +136,7 @@ export default function CapabilitiesPage() {
   );
 
   const Card = ({ children }: { children: React.ReactNode }) => (
-    <section className="rounded-[16px] bg-background border border-white/[0.06] overflow-hidden">
+    <section className="rounded-[16px] bg-background border border-foreground/[0.06] overflow-hidden">
       {children}
     </section>
   );

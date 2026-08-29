@@ -25,7 +25,7 @@ export function CleanCard({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-foreground/10 bg-white/[0.05] backdrop-blur-xl text-foreground shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]",
+        "rounded-2xl border border-foreground/10 bg-foreground/[0.05] backdrop-blur-xl text-foreground shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]",
         className,
       )}
     >
@@ -79,7 +79,7 @@ export function CleanField({
 /* ---------- Inputs ---------- */
 
 const inputCls =
-  "w-full h-10 px-3.5 rounded-lg border border-foreground/12 bg-white/[0.06] text-[13.5px] text-foreground placeholder:text-foreground/65 outline-none transition-colors focus:border-foreground/40 focus:bg-white/[0.09]";
+  "w-full h-10 px-3.5 rounded-lg border border-foreground/12 bg-foreground/[0.06] text-[13.5px] text-foreground placeholder:text-foreground/65 outline-none transition-colors focus:border-foreground/40 focus:bg-foreground/[0.09]";
 
 export function CleanInput(props: InputHTMLAttributes<HTMLInputElement>) {
   return <input {...props} className={cn(inputCls, props.className)} />;

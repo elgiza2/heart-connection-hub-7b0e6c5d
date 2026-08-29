@@ -216,7 +216,7 @@ function PreviewModal({ item, kind, onClose }: { item: Item; kind: Kind; onClose
         type="button"
         onClick={onClose}
         aria-label="Close"
-        className="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20"
+        className="absolute top-4 right-4 p-2 rounded-full bg-foreground/10 text-white hover:bg-foreground/20"
       >
         <X className="w-5 h-5" />
       </button>

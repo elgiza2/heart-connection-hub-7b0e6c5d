@@ -179,7 +179,7 @@ export default function SettingsContactPage() {
             <button
               onClick={submit}
               disabled={!canSend}
-              className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-foreground bg-foreground px-6 py-4 text-[15px] font-semibold text-background transition-all hover:bg-white active:scale-[0.98] disabled:cursor-not-allowed disabled:border-border disabled:bg-background/40 disabled:text-muted-foreground"
+              className="flex w-full items-center justify-center gap-2 rounded-[24px] border border-foreground bg-foreground px-6 py-4 text-[15px] font-semibold text-background transition-all hover:bg-foreground/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:border-border disabled:bg-background/40 disabled:text-muted-foreground"
             >
               {sending ? (
                 <>
