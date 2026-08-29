@@ -83,7 +83,6 @@ import {
   ChainOfThoughtItem,
 } from "@/components/prompt-kit/chain-of-thought";
 import { Message, MessageContent } from "@/components/prompt-kit/message";
-import { ToolCard } from "@/pages/chat/components/aui/ToolCard";
 import ThinkingTrace from "./ThinkingTrace";
 import { estimateTokens, formatTokens } from "@/pages/chat/utils/estimateTokens";
 
@@ -830,8 +829,10 @@ const ChatMessage = ({
   const swipeStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const [swipeHint, setSwipeHint] = useState<"regen" | "branch" | null>(null);
 
-  // Swipe gestures on assistant bubble (mobile). Left → Regenerate, Right → Branch.
-  const swipeEnabled = role === "assistant" && !isStreaming && (!!onRegenerate || !!onBranch);
+  // Swipe gestures on the assistant bubble are DISABLED on purpose: a stray
+  // horizontal drag (e.g. trying to open the sidebar) used to fire Regenerate
+  // or Branch, which truncated the conversation and looked like content loss.
+  const swipeEnabled = false as boolean;
   const handleTouchStart = swipeEnabled
     ? (e: React.TouchEvent) => {
         const t = e.touches[0];
@@ -884,6 +885,8 @@ const ChatMessage = ({
     const closeWhenOutsideMenu = (event: PointerEvent | TouchEvent) => {
       const target = event.target as Node | null;
       if (target && mobileMenuRef.current?.contains(target)) return;
+      // Taps on the bubble itself are handled by its own toggle.
+      if (target && userBubbleRef.current?.contains(target)) return;
       setMenuOpen(false);
     };
 
@@ -904,9 +907,12 @@ const ChatMessage = ({
   }, []);
 
   const longPressFiredRef = useRef(false);
+  const longPressOriginRef = useRef<{ x: number; y: number } | null>(null);
   const handleLongPressStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (role !== "user") return;
+      const touch = e.touches[0];
+      longPressOriginRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
       longPressFiredRef.current = false;
       longPressRef.current = setTimeout(() => {
         longPressFiredRef.current = true;
@@ -915,10 +921,34 @@ const ChatMessage = ({
           (navigator as any).vibrate?.(8);
         } catch {}
         setMenuOpen(true);
-      }, 380);
+      }, 350);
     },
     [role],
   );
+
+  // Only cancel the long press when the finger actually MOVES. Cancelling on
+  // every touchmove (browsers emit them even for a still finger) is why the
+  // Copy/Edit sheet never appeared on mobile.
+  const handleLongPressMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      const origin = longPressOriginRef.current;
+      const touch = e.touches[0];
+      if (!origin || !touch) return;
+      if (Math.abs(touch.clientX - origin.x) > 12 || Math.abs(touch.clientY - origin.y) > 12) {
+        clearLongPress();
+        longPressOriginRef.current = null;
+      }
+    },
+    [clearLongPress],
+  );
+
+  // Tap on your own message also opens Copy/Edit — long-press alone is too
+  // hidden on mobile.
+  const handleBubbleTap = useCallback(() => {
+    if (role !== "user") return;
+    if (longPressFiredRef.current) return;
+    setMenuOpen((v) => !v);
+  }, [role]);
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -1226,9 +1256,12 @@ const ChatMessage = ({
                   onContextMenu={handleContextMenu}
                   onTouchStart={handleLongPressStart}
                   onTouchEnd={clearLongPress}
-                  onTouchMove={clearLongPress}
+                  onTouchMove={handleLongPressMove}
                   onTouchCancel={clearLongPress}
-                  onClick={handleBubbleClick}
+                  onClick={(e) => {
+                    handleBubbleClick(e);
+                    handleBubbleTap();
+                  }}
                   style={{
                     background: "var(--user-bubble, #2563eb)",
                     color: "var(--user-bubble-text, #ffffff)",
@@ -1420,7 +1453,7 @@ const ChatMessage = ({
         {showLiveThinkingTrace && (
           <ThinkingTrace
             status={searchStatus}
-            steps={activeThinkingSteps}
+            steps={[...(narrations || []), ...(activeThinkingSteps || [])]}
             text={reasoning}
             active
             className={content ? "mb-2" : ""}
@@ -1453,13 +1486,8 @@ const ChatMessage = ({
           </div>
         )}
 
-        {role === "assistant" && toolParts && toolParts.length > 0 && (
-          <div className="mb-1">
-            {toolParts.map((tp) => (
-              <ToolCard key={tp.id} part={tp} />
-            ))}
-          </div>
-        )}
+        {/* Tool usage is intentionally NOT rendered as cards/buttons inside the
+            chat. It is surfaced through the thinking badge above instead. */}
         {hasConnectCardContent ? (
           <div className="space-y-2">
             <Suspense fallback={null}>
