@@ -260,7 +260,7 @@ const manusCss = `
 .ms-screen { width: 100%; max-width: 420px; }
 .ms-header {
   position: sticky; top: 0; z-index: 5;
-  display: grid; grid-template-columns: 34px 1fr 34px; align-items: center;
+  display: grid; grid-template-columns: 44px 1fr 44px; align-items: center;
   padding: calc(env(safe-area-inset-top, 0px) + 8px) 10px 8px;
   background: var(--mn-bg);
 }
