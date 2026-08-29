@@ -906,9 +906,12 @@ const ChatMessage = ({
   }, []);
 
   const longPressFiredRef = useRef(false);
+  const longPressOriginRef = useRef<{ x: number; y: number } | null>(null);
   const handleLongPressStart = useCallback(
     (e: React.TouchEvent<HTMLDivElement>) => {
       if (role !== "user") return;
+      const touch = e.touches[0];
+      longPressOriginRef.current = touch ? { x: touch.clientX, y: touch.clientY } : null;
       longPressFiredRef.current = false;
       longPressRef.current = setTimeout(() => {
         longPressFiredRef.current = true;
@@ -917,10 +920,34 @@ const ChatMessage = ({
           (navigator as any).vibrate?.(8);
         } catch {}
         setMenuOpen(true);
-      }, 380);
+      }, 350);
     },
     [role],
   );
+
+  // Only cancel the long press when the finger actually MOVES. Cancelling on
+  // every touchmove (browsers emit them even for a still finger) is why the
+  // Copy/Edit sheet never appeared on mobile.
+  const handleLongPressMove = useCallback(
+    (e: React.TouchEvent<HTMLDivElement>) => {
+      const origin = longPressOriginRef.current;
+      const touch = e.touches[0];
+      if (!origin || !touch) return;
+      if (Math.abs(touch.clientX - origin.x) > 12 || Math.abs(touch.clientY - origin.y) > 12) {
+        clearLongPress();
+        longPressOriginRef.current = null;
+      }
+    },
+    [clearLongPress],
+  );
+
+  // Tap on your own message also opens Copy/Edit — long-press alone is too
+  // hidden on mobile.
+  const handleBubbleTap = useCallback(() => {
+    if (role !== "user") return;
+    if (longPressFiredRef.current) return;
+    setMenuOpen((v) => !v);
+  }, [role]);
 
   const handleContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
