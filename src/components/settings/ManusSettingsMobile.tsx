@@ -173,7 +173,7 @@ const ManusSettingsMobile = () => {
           </button>
         </header>
 
-        <div className="ms-body">
+        <main className="ms-body">
           {/* Profile */}
           <button type="button" className="ms-card ms-profile" onClick={() => navigate("/settings/profile/edit")}>
             {account.avatarUrl ? (
@@ -219,7 +219,7 @@ const ManusSettingsMobile = () => {
           </section>
 
           <div className="ms-spacer" />
-        </div>
+        </main>
 
         {logoutOpen && (
           <div className="ms-confirm-scrim" role="presentation" onClick={() => setLogoutOpen(false)}>
@@ -260,17 +260,18 @@ const manusCss = `
 .ms-screen { width: 100%; max-width: 420px; }
 .ms-header {
   position: sticky; top: 0; z-index: 5;
-  display: grid; grid-template-columns: 34px 1fr 34px; align-items: center;
+  display: grid; grid-template-columns: 44px 1fr 44px; align-items: center;
   padding: calc(env(safe-area-inset-top, 0px) + 8px) 10px 8px;
   background: var(--mn-bg);
 }
 .ms-hbtn {
   grid-column: 3;
-  position: relative; width: 34px; height: 34px;
+  position: relative; width: 44px; height: 44px; margin: -5px;
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: 0; color: var(--mn-fg); cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+.ms-hbtn:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 12px; }
 .ms-hicon { width: 20px; height: 20px; }
 .ms-brand {
   grid-column: 2; text-align: center;

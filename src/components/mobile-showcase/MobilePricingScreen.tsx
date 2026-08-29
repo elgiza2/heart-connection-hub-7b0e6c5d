@@ -254,7 +254,7 @@ export default function MobilePricingScreen({
         />
       </header>
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[400px] flex-1 flex-col px-5">
+      <main className="relative z-10 mx-auto flex w-full max-w-[400px] flex-1 flex-col px-5">
         {/* Megsy star mark */}
         <div
           className={`mps-rise flex justify-center ${compact ? "mt-[2%]" : "mt-[4%]"}`}
@@ -408,18 +408,18 @@ export default function MobilePricingScreen({
             style={{ color: c.faint }}
             aria-label="Legal"
           >
-            <Link to="/terms" className="px-1 py-1 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
+            <Link to="/terms" className="inline-flex min-h-11 items-center px-2 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
               {t.terms}
             </Link>
-            <Link to="/privacy" className="px-1 py-1 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
+            <Link to="/privacy" className="inline-flex min-h-11 items-center px-2 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
               {t.privacy}
             </Link>
-            <Link to="/restore" className="px-1 py-1 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
+            <Link to="/restore" className="inline-flex min-h-11 items-center px-2 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
               {t.restore}
             </Link>
           </nav>
         </div>
-      </div>
+      </main>
 
     </div>
   );

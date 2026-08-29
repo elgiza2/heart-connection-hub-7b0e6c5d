@@ -70,6 +70,7 @@ const SecurityPage = () => (
     />
     <LandingNavbar />
 
+    <main>
     <section className="max-w-5xl mx-auto px-5 pt-24 pb-10">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
@@ -140,6 +141,7 @@ const SecurityPage = () => (
         </a>
       </motion.div>
     </section>
+    </main>
 
     <LazyOnVisible minHeight={320} rootMargin="600px"><Suspense fallback={<div style={{ minHeight: 320 }} />}><LandingFooter /></Suspense></LazyOnVisible>
   </div>

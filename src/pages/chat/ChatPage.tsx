@@ -2929,6 +2929,8 @@ const ChatPage = () => {
             setSidebarOpen(!shouldClose);
             animateSidebarTo(!shouldClose);
           }}
+          role="main"
+          aria-label="Chat"
           className="theme-fixed chat-surface-dark flex-1 flex flex-col min-w-0 relative overflow-hidden bg-background text-foreground max-md:z-[2]"
         >
 
