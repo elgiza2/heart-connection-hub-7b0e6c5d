@@ -202,7 +202,7 @@ export default function McpTab({
     : servers;
 
   return (
-    <div dir="ltr" className="pb-4">
+    <div className="pb-4">
       {adding ? (
         <div className="rounded-[22px] bg-foreground/[0.035] p-4 ring-1 ring-inset ring-foreground/[0.06]">
           <div className="mb-4 flex items-center gap-2.5">

@@ -194,6 +194,7 @@ html.lenis body {
   --overlay-white-95: rgba(255, 255, 255, 0.95);
   --overlay-white-100: #ffffff;
   --overlay-black-22: rgba(0, 0, 0, 0.22);
+  --overlay-black-35: rgba(0, 0, 0, 0.35);
   --overlay-black-50: rgba(0, 0, 0, 0.50);
   --overlay-black-55: rgba(0, 0, 0, 0.55);
   --page-bg: #1c1c1c;

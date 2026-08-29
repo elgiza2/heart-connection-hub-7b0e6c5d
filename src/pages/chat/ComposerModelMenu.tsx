@@ -305,7 +305,6 @@ export default function ComposerModelMenu({
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: pos.bottom != null ? 10 : -10, scale: 0.98 }}
                   transition={{ type: "spring", stiffness: 420, damping: 36, mass: 0.6 }}
-                  dir="rtl"
                   style={{
                     position: "fixed",
                     ...(pos.bottom != null

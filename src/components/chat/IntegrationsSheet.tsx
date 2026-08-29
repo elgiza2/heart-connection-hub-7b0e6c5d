@@ -144,7 +144,7 @@ export default function IntegrationsSheet({ open, onOpenChange }: Props) {
               sheetKind="integrations"
               onClose={() => onOpenChange(false)}
             >
-              <div dir="rtl" className="flex min-h-full flex-col">
+              <div className="flex min-h-full flex-col">
                 <AnimatePresence mode="wait" initial={false}>
                   {apiDetail ? (
                     <motion.div

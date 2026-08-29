@@ -200,7 +200,7 @@ const NotificationsPage = () => {
                   <div className="text-[14px] font-medium text-foreground">{t.title}</div>
                   <div className="text-[12.5px] text-muted-foreground mt-0.5">{t.desc}</div>
                 </div>
-                <Switch checked={prefs[t.key]} onChange={(v) => setKey(t.key, v)} />
+                <Switch label={t.title} checked={prefs[t.key]} onChange={(v) => setKey(t.key, v)} />
               </div>
             ))}
           </div>
@@ -216,7 +216,7 @@ const NotificationsPage = () => {
                 Turn off to stop all emails from Megsy, including product news
               </div>
             </div>
-            <Switch checked={prefs.email_enabled} onChange={(v) => setKey("email_enabled", v)} />
+            <Switch label="Email notifications" checked={prefs.email_enabled} onChange={(v) => setKey("email_enabled", v)} />
           </div>
         </SubCard>
       </SubSection>
@@ -231,7 +231,7 @@ const NotificationsPage = () => {
                   <div className="text-[14px] font-medium text-foreground">{t.title}</div>
                   <div className="text-[12.5px] text-muted-foreground mt-0.5">{t.desc}</div>
                 </div>
-                <Switch checked={prefs[t.key]} onChange={(v) => setKey(t.key, v)} />
+                <Switch label={t.title} checked={prefs[t.key]} onChange={(v) => setKey(t.key, v)} />
               </div>
             ))}
           </div>
@@ -251,16 +251,17 @@ const ToggleRow = ({
         <div className="npg-row-title">{title}</div>
         <div className="npg-row-desc">{desc}</div>
       </div>
-      <Switch checked={checked} onChange={onChange} />
+      <Switch label={title} checked={checked} onChange={onChange} />
     </div>
     {divider && <div className="npg-divider" />}
   </>
 );
 
-const Switch = ({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) => (
+const Switch = ({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) => (
   <button
     type="button"
     role="switch"
+    aria-label={label}
     aria-checked={checked}
     onClick={() => onChange(!checked)}
     className={`npg-switch ${checked ? "is-on" : ""}`}
