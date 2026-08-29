@@ -313,6 +313,14 @@ export async function runChatStreamTurn(opts: RunChatStreamTurnOptions): Promise
     ].includes(trimmed);
   };
 
+  /** Human readable one-liner for a tool call, used in the thinking badge. */
+  const prettyToolLabel = (name?: unknown, target?: unknown) => {
+    const n = String(name || "tool").replace(/[_\-.]+/g, " ").trim();
+    const t = String(target || "").trim();
+    return t ? `${n} · ${t}` : n;
+  };
+
+
   // ---------------------------------------------------------------------
   // Smooth reveal. Some backend paths (tool / MCP turns) flush the whole
   // answer in a single SSE chunk, which used to make the reply pop in at
