@@ -1454,7 +1454,7 @@ const ChatMessage = ({
         {showLiveThinkingTrace && (
           <ThinkingTrace
             status={searchStatus}
-            steps={activeThinkingSteps}
+            steps={[...(narrations || []), ...(activeThinkingSteps || [])]}
             text={reasoning}
             active
             className={content ? "mb-2" : ""}
