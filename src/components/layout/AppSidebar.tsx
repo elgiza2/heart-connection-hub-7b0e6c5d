@@ -853,7 +853,9 @@ const AppSidebar = ({
                                     fontWeight: 600,
                                   }
                             }
-                            className="w-full text-left px-3 py-2 rounded-full text-[13px] truncate transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                            aria-label={conv.title || "Untitled"}
+                            title={conv.title || "Untitled"}
+                            className="w-full text-start px-3 py-2 rounded-full text-[13px] truncate transition-all active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                           >
                             <span className="truncate">{conv.title || "Untitled"}</span>
                           </button>
