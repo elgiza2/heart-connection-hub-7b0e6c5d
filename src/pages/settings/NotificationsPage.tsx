@@ -292,7 +292,7 @@ const npgCss = `
 }
 .npg-status { display: flex; justify-content: flex-end; padding-right: 4px; }
 .npg-icon-btn {
-  width: 40px; height: 40px;
+  width: 44px; height: 44px; margin-inline-start: -2px;
   display: inline-grid; place-items: center;
   border-radius: 999px;
   background: transparent;
@@ -340,30 +340,30 @@ const npgCss = `
 .npg-spacer { height: 40px; }
 
 .npg-switch {
+  /* 44px tall hit area; the visible 31px iOS-style track is drawn by ::before. */
   position: relative;
   flex-shrink: 0;
-  width: 51px; height: 31px;
-  border-radius: 999px;
-  background: rgba(120,120,128,0.32);
+  width: 51px; height: 44px;
+  background: transparent;
   border: 0; padding: 0;
   cursor: pointer;
-  transition: background 180ms ease;
 }
-/* Invisible 44px-tall hit area around the 31px iOS-style track. */
-.npg-switch::after {
+.npg-switch::before {
   content: "";
   position: absolute;
-  inset: -7px -4px;
+  left: 0; right: 0; top: 6.5px; height: 31px;
   border-radius: 999px;
+  background: rgba(120,120,128,0.32);
+  transition: background 180ms ease;
 }
 .npg-switch:focus-visible {
   outline: 2px solid hsl(var(--ring));
   outline-offset: 3px;
 }
-.npg-switch.is-on { background: hsl(var(--primary)); }
+.npg-switch.is-on::before { background: hsl(var(--primary)); }
 .npg-switch-thumb {
   position: absolute;
-  top: 2px; left: 2px;
+  top: 8.5px; left: 2px;
   width: 27px; height: 27px;
   border-radius: 50%;
   background: #fff;
