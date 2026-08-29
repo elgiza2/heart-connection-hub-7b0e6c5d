@@ -266,7 +266,9 @@ const manusCss = `
 }
 .ms-hbtn {
   grid-column: 3;
+  /* keeps the 34px visual box while extending the touch area to 44px */
   position: relative; width: 34px; height: 34px;
+  min-width: 34px; min-height: 34px;
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: 0; color: var(--mn-fg); cursor: pointer;
   -webkit-tap-highlight-color: transparent;
