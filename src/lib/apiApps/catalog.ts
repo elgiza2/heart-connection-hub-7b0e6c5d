@@ -588,10 +588,16 @@ export const API_APPS: ApiApp[] = [
 ];
 
 import { MANUS_APPS } from "./manus";
-import { NANGO_APPS } from "./nango.generated";
+import { loadNangoApps, loadedNangoApps } from "./nango.generated";
 
 /** Any connectable app: curated catalog, the Manus line-up, or the wider registry. */
 export const findApiApp = (id: string) =>
   API_APPS.find((a) => a.id === id) ??
   MANUS_APPS.find((a) => a.id === id) ??
-  NANGO_APPS.find((a) => a.id === id);
+  loadedNangoApps().find((a) => a.id === id);
+
+/** Same lookup, but pulls the lazy Nango registry in when needed. */
+export const findApiAppAsync = async (id: string) =>
+  API_APPS.find((a) => a.id === id) ??
+  MANUS_APPS.find((a) => a.id === id) ??
+  (await loadNangoApps()).find((a) => a.id === id);

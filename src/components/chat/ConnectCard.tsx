@@ -12,7 +12,7 @@ import type { ConnectSpec } from "@/lib/chat/connectCardParser";
 import { addMcpServer } from "@/lib/mcp/client";
 import { saveApiAppCredentials } from "@/lib/apiApps/client";
 import { MANUS_APPS } from "@/lib/apiApps/manus";
-import { NANGO_APPS } from "@/lib/apiApps/nango.generated";
+import { loadNangoApps } from "@/lib/apiApps/nango.generated";
 import type { ApiApp } from "@/lib/apiApps/types";
 import { notifyTurnContextChanged } from "@/lib/chat/turnContext";
 
@@ -21,9 +21,9 @@ const CARD =
 const FIELD =
   "h-11 w-full rounded-[13px] bg-background px-3.5 text-[14px] text-foreground outline-none placeholder:text-foreground/65";
 
-function findApp(appId: string): ApiApp | null {
+function findApp(appId: string, nangoApps: ApiApp[]): ApiApp | null {
   const key = appId.trim().toLowerCase();
-  const all = [...MANUS_APPS, ...NANGO_APPS];
+  const all = [...MANUS_APPS, ...nangoApps];
   return (
     all.find((a) => a.id.toLowerCase() === key) ??
     all.find((a) => a.name.toLowerCase() === key) ??
@@ -32,7 +32,21 @@ function findApp(appId: string): ApiApp | null {
 }
 
 export default function ConnectCard({ spec }: { spec: ConnectSpec }) {
-  const app = useMemo(() => (spec.kind === "api" ? findApp(spec.appId || "") : null), [spec]);
+  const [nangoApps, setNangoApps] = useState<ApiApp[]>([]);
+  useEffect(() => {
+    if (spec.kind !== "api") return;
+    let alive = true;
+    loadNangoApps().then((apps) => {
+      if (alive) setNangoApps(apps);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [spec.kind]);
+  const app = useMemo(
+    () => (spec.kind === "api" ? findApp(spec.appId || "", nangoApps) : null),
+    [spec, nangoApps],
+  );
   const fields = useMemo(() => {
     if (spec.kind !== "api") return [];
     if (app?.credentials?.length) return app.credentials;

@@ -7,7 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronRight, MessageSquarePlus } from "lucide-react";
 import { MANUS_APPS } from "@/lib/apiApps/manus";
-import { NANGO_APPS } from "@/lib/apiApps/nango.generated";
+import { loadNangoApps } from "@/lib/apiApps/nango.generated";
 import { listApiApps } from "@/lib/apiApps/client";
 import type { ApiApp } from "@/lib/apiApps/types";
 import ApiAppLogo from "./ApiAppLogo";
@@ -52,17 +52,28 @@ export default function ApiAppsTab({
   }, [reloadKey]);
 
   // Manus's own connector line-up first, then the wider credential-based catalog.
+  const [nangoApps, setNangoApps] = useState<ApiApp[]>([]);
+  useEffect(() => {
+    let alive = true;
+    loadNangoApps().then((apps) => {
+      if (alive) setNangoApps(apps);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const rows = useMemo<Row[]>(() => {
     const out: Row[] = [];
     const seen = new Set<string>();
-    for (const app of [...MANUS_APPS, ...NANGO_APPS]) {
+    for (const app of [...MANUS_APPS, ...nangoApps]) {
       const key = app.name.trim().toLowerCase();
       if (seen.has(key)) continue;
       seen.add(key);
       out.push({ id: app.id, name: app.name, description: app.description, logo: app.logo, app });
     }
     return out;
-  }, []);
+  }, [nangoApps]);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();

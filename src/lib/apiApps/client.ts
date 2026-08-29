@@ -102,8 +102,8 @@ export async function runApiTool(
   tool: string,
   params: Record<string, unknown> = {},
 ): Promise<unknown> {
-  const { findApiApp } = await import("./catalog");
-  const app = findApiApp(appId);
+  const { findApiAppAsync } = await import("./catalog");
+  const app = await findApiAppAsync(appId);
   const spec = app?.tools.find((t) => t.name === tool);
   if (!app || !spec) throw new Error("Unknown action");
   const { data: session } = await supabase.auth.getSession();
