@@ -266,13 +266,12 @@ const manusCss = `
 }
 .ms-hbtn {
   grid-column: 3;
-  /* keeps the 34px visual box while extending the touch area to 44px */
-  position: relative; width: 34px; height: 34px;
-  min-width: 34px; min-height: 34px;
+  position: relative; width: 44px; height: 44px; margin: -5px;
   display: inline-flex; align-items: center; justify-content: center;
   background: transparent; border: 0; color: var(--mn-fg); cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+.ms-hbtn:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; border-radius: 12px; }
 .ms-hicon { width: 20px; height: 20px; }
 .ms-brand {
   grid-column: 2; text-align: center;
