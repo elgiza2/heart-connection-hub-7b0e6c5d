@@ -137,7 +137,9 @@ const CSS = `
 .fs-slide-prev { animation: fsPageInPrev .42s cubic-bezier(0.22,1,0.36,1) both; }
 @keyframes fsLabelIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .fs-label { display: inline-block; animation: fsLabelIn .28s ease-out both; }
-.fs-dot { border: 0; padding: 0; cursor: pointer; background: transparent; }
+/* 6px dots need a 44px hit area to satisfy WCAG 2.5.8 without changing the
+   visual size, so the padding is transparent and the dot stays centred. */
+.fs-dot { border: 0; padding: 19px 8px; margin: -19px -8px; min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; }
 .fs-dot span { display: block; height: 6px; border-radius: 999px; transition: width .3s cubic-bezier(0.22,1,0.36,1), background .3s ease, opacity .3s ease; }
 .fs-bg { transition: transform 1.2s cubic-bezier(0.22,1,0.36,1), filter .8s ease; }
 /* drag surface follows the finger, then settles back with a spring-ish ease */
