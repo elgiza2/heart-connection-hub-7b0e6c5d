@@ -1129,6 +1129,8 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
         zIndex: 0,
       }}
     >
+      {/* Screen-reader-only page heading: the slides only carry h2 headlines. */}
+      <h1 className="sr-only">Megsy — Welcome</h1>
       <img
         src={BG}
         alt=""
