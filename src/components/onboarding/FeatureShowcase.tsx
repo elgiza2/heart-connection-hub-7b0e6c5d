@@ -1109,6 +1109,7 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
 
   return (
     <div
+      role="main"
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
