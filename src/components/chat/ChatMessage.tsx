@@ -830,8 +830,10 @@ const ChatMessage = ({
   const swipeStartRef = useRef<{ x: number; y: number; t: number } | null>(null);
   const [swipeHint, setSwipeHint] = useState<"regen" | "branch" | null>(null);
 
-  // Swipe gestures on assistant bubble (mobile). Left → Regenerate, Right → Branch.
-  const swipeEnabled = role === "assistant" && !isStreaming && (!!onRegenerate || !!onBranch);
+  // Swipe gestures on the assistant bubble are DISABLED on purpose: a stray
+  // horizontal drag (e.g. trying to open the sidebar) used to fire Regenerate
+  // or Branch, which truncated the conversation and looked like content loss.
+  const swipeEnabled = false as boolean;
   const handleTouchStart = swipeEnabled
     ? (e: React.TouchEvent) => {
         const t = e.touches[0];
