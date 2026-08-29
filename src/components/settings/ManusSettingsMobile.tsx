@@ -173,7 +173,7 @@ const ManusSettingsMobile = () => {
           </button>
         </header>
 
-        <div className="ms-body">
+        <main className="ms-body">
           {/* Profile */}
           <button type="button" className="ms-card ms-profile" onClick={() => navigate("/settings/profile/edit")}>
             {account.avatarUrl ? (
