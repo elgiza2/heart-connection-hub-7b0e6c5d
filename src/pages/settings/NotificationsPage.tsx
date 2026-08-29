@@ -349,6 +349,17 @@ const npgCss = `
   cursor: pointer;
   transition: background 180ms ease;
 }
+/* Invisible 44px-tall hit area around the 31px iOS-style track. */
+.npg-switch::after {
+  content: "";
+  position: absolute;
+  inset: -7px -4px;
+  border-radius: 999px;
+}
+.npg-switch:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
 .npg-switch.is-on { background: hsl(var(--primary)); }
 .npg-switch-thumb {
   position: absolute;
