@@ -1487,13 +1487,8 @@ const ChatMessage = ({
           </div>
         )}
 
-        {role === "assistant" && toolParts && toolParts.length > 0 && (
-          <div className="mb-1">
-            {toolParts.map((tp) => (
-              <ToolCard key={tp.id} part={tp} />
-            ))}
-          </div>
-        )}
+        {/* Tool usage is intentionally NOT rendered as cards/buttons inside the
+            chat. It is surfaced through the thinking badge above instead. */}
         {hasConnectCardContent ? (
           <div className="space-y-2">
             <Suspense fallback={null}>
