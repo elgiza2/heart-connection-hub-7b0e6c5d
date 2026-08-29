@@ -743,7 +743,7 @@ const MobileChatLanding = ({
               Tap Connect to link an app — it stays inside the chat.
             </GlassSheetDescription>
           </GlassSheetHeader>
-          <ul className="mt-2 divide-y divide-white/[0.06]">
+          <ul className="mt-2 divide-y divide-foreground/[0.06]">
             {CONNECT_ITEMS.map((it) => {
               const isConnected = connectedIds.has(it.id);
               const isLoadingThis = connectingId === it.id;

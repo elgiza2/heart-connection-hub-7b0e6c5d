@@ -33,7 +33,7 @@ export default function SettingsPrivacyPage() {
   };
 
   const DataPrivacyCard = () => (
-    <div className="rounded-[18px] bg-background border border-white/[0.07] p-4">
+    <div className="rounded-[18px] bg-background border border-foreground/[0.07] p-4">
       <h3 className="text-[17px] font-semibold text-foreground mb-2">Data privacy</h3>
       <p className="text-[13px] leading-[1.45] text-foreground/55">
         Megsy believes in transparent data practices.
@@ -67,7 +67,7 @@ export default function SettingsPrivacyPage() {
   );
 
   const ExportDataCard = () => (
-    <div className="rounded-[18px] bg-background border border-white/[0.07] p-4 flex items-start gap-3">
+    <div className="rounded-[18px] bg-background border border-foreground/[0.07] p-4 flex items-start gap-3">
       <div className="flex-1 min-w-0">
         <h3 className="text-[17px] font-semibold text-foreground leading-tight">
           Download my data
@@ -79,7 +79,7 @@ export default function SettingsPrivacyPage() {
           type="button"
           onClick={handleExportData}
           disabled={isExporting}
-          className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/[0.08] border border-white/[0.1] px-4 py-2 text-[13px] font-medium text-foreground disabled:opacity-50"
+          className="mt-3 inline-flex items-center gap-2 rounded-full bg-foreground/[0.08] border border-foreground/[0.1] px-4 py-2 text-[13px] font-medium text-foreground disabled:opacity-50"
       aria-label="Download"
     >
           <Download className="w-[14px] h-[14px]" />

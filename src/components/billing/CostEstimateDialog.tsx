@@ -100,7 +100,7 @@ export function CostEstimateDialog({
 
         <div className="space-y-3 py-2">
           {/* Cost row */}
-          <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-white/[0.03] px-3.5 py-2.5">
+          <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.03] px-3.5 py-2.5">
             <span className="text-xs text-foreground/60">Estimated cost</span>
             <span className="inline-flex items-center gap-1 text-sm font-semibold text-emerald-400 tabular-nums">
               <Sparkles className="h-3.5 w-3.5" />
@@ -109,7 +109,7 @@ export function CostEstimateDialog({
           </div>
 
           {/* Balance row */}
-          <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-white/[0.03] px-3.5 py-2.5">
+          <div className="flex items-center justify-between rounded-xl border border-foreground/10 bg-foreground/[0.03] px-3.5 py-2.5">
             <span className="text-xs text-foreground/60">Current balance</span>
             <span
               className={cn(

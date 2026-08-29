@@ -96,11 +96,11 @@ function bucketOf(iso: string): "Today" | "Yesterday" | "This week" | "Earlier" 
 
 /** Liquid-glass surface used by every header bar, action bar and dock. */
 const glassBarCls =
-  "border border-white/40 bg-card/60 shadow-[0_18px_44px_-14px_hsl(var(--foreground)/0.25),inset_0_1px_0_hsl(0_0%_100%/0.5)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10";
+  "border border-foreground/40 bg-card/60 shadow-[0_18px_44px_-14px_hsl(var(--foreground)/0.25),inset_0_1px_0_hsl(0_0%_100%/0.5)] backdrop-blur-2xl backdrop-saturate-150 dark:border-foreground/10";
 
 /** Grouped content card — the single content surface used across all mail screens. */
 const glassCardCls =
-  "overflow-hidden rounded-[24px] border border-white/40 bg-card/70 shadow-[0_10px_30px_-18px_hsl(var(--foreground)/0.35),inset_0_1px_0_hsl(0_0%_100%/0.45)] backdrop-blur-xl dark:border-white/10";
+  "overflow-hidden rounded-[24px] border border-foreground/40 bg-card/70 shadow-[0_10px_30px_-18px_hsl(var(--foreground)/0.35),inset_0_1px_0_hsl(0_0%_100%/0.45)] backdrop-blur-xl dark:border-foreground/10";
 
 /** Hairline separator inside grouped cards. */
 const hairline = "h-px bg-foreground/[0.07]";
@@ -507,7 +507,7 @@ export default function MailPage() {
         >
           <div className="pointer-events-auto flex items-center gap-2">
             <div
-              className="relative flex items-center gap-1 border border-white/40 bg-card/55 p-1.5 shadow-[0_18px_44px_-12px_hsl(var(--foreground)/0.28),inset_0_1px_0_hsl(0_0%_100%/0.5)] backdrop-blur-2xl backdrop-saturate-150 dark:border-white/10"
+              className="relative flex items-center gap-1 border border-foreground/40 bg-card/55 p-1.5 shadow-[0_18px_44px_-12px_hsl(var(--foreground)/0.28),inset_0_1px_0_hsl(0_0%_100%/0.5)] backdrop-blur-2xl backdrop-saturate-150 dark:border-foreground/10"
               style={{ borderRadius: 9999 }}
             >
               {FOLDERS.map((f) => {
@@ -538,7 +538,7 @@ export default function MailPage() {
               aria-label={tx("Compose")}
               onClick={() => setDraft({ to: "", subject: "", text: "" })}
               style={{ borderRadius: 9999 }}
-              className="grid h-12 w-12 place-items-center border border-white/30 bg-primary/90 text-primary-foreground shadow-[0_14px_30px_-8px_hsl(var(--primary)/0.6),inset_0_1px_0_hsl(0_0%_100%/0.35)] backdrop-blur-xl transition-transform active:scale-90"
+              className="grid h-12 w-12 place-items-center border border-foreground/30 bg-primary/90 text-primary-foreground shadow-[0_14px_30px_-8px_hsl(var(--primary)/0.6),inset_0_1px_0_hsl(0_0%_100%/0.35)] backdrop-blur-xl transition-transform active:scale-90"
             >
               <span className="contents">
                 <Plus className="h-5 w-5" />

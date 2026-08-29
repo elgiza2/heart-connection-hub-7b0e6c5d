@@ -310,7 +310,7 @@ export default function MobileAuthIntro({
                   <button
                     type="button"
                     onClick={onForgotPassword}
-                    className="text-[12px] text-foreground/60 hover:text-foreground/85 underline underline-offset-4 decoration-white/25 transition-colors"
+                    className="text-[12px] text-foreground/60 hover:text-foreground/85 underline underline-offset-4 decoration-foreground/25 transition-colors"
                   >
                     {t.forgot}
                   </button>
@@ -373,7 +373,7 @@ export default function MobileAuthIntro({
           style={{ fontSize: "11.5px", color: "rgba(255,255,255,.42)", letterSpacing: "0.1px" }}
         >
           {t.terms}{" "}
-          <a href="/terms" style={{ color: "rgba(255,255,255,.78)" }} className="underline underline-offset-2 decoration-white/25">
+          <a href="/terms" style={{ color: "rgba(255,255,255,.78)" }} className="underline underline-offset-2 decoration-foreground/25">
             {t.termsLink}
           </a>
         </p>

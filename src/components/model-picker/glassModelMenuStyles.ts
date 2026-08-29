@@ -27,9 +27,9 @@ export const glassModelMenuIconStyle: CSSProperties = {
 
 export const glassModelMenu = {
   panel:
-    "z-[9999] rounded-2xl border border-white/15 p-2 text-foreground overflow-hidden unified-menu-surface",
+    "z-[9999] rounded-2xl border border-foreground/15 p-2 text-foreground overflow-hidden unified-menu-surface",
   panelScrollable:
-    "z-[9999] rounded-2xl border border-white/15 p-2 text-foreground overflow-y-auto max-h-[min(520px,calc(100vh-120px))] unified-menu-surface",
+    "z-[9999] rounded-2xl border border-foreground/15 p-2 text-foreground overflow-y-auto max-h-[min(520px,calc(100vh-120px))] unified-menu-surface",
   sheetFrame:
     "border-t border-foreground/15 p-2 text-foreground overflow-hidden rounded-[24px] flex flex-col",
   bottomSheet:

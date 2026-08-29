@@ -21,7 +21,7 @@ export function ChatModelSettingsPanel() {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
+      <div className="flex flex-col rounded-2xl border border-foreground/[0.08] bg-foreground/[0.03] overflow-hidden">
         {OPTIONS.map(({ id, icon: Icon, description }) => {
           const active = current === id;
           return (
@@ -29,9 +29,9 @@ export function ChatModelSettingsPanel() {
               key={id}
               type="button"
               onClick={() => { setResponseStyle(id); setCurrent(id); }}
-              className={`flex w-full items-center gap-3 px-4 py-3.5 text-start transition-colors border-b border-white/[0.06] last:border-b-0 ${active ? "bg-white/[0.04]" : "hover:bg-white/[0.03]"}`}
+              className={`flex w-full items-center gap-3 px-4 py-3.5 text-start transition-colors border-b border-foreground/[0.06] last:border-b-0 ${active ? "bg-foreground/[0.04]" : "hover:bg-foreground/[0.03]"}`}
             >
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/[0.06]"><Icon className="h-4 w-4 text-foreground/80" /></span>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-foreground/[0.06]"><Icon className="h-4 w-4 text-foreground/80" /></span>
               <span className="min-w-0 flex-1">
                 <span className="block text-[15px] font-semibold text-foreground">{STYLE_LABELS_AR[id]}</span>
                 <span className="block truncate text-[12px] text-foreground/55">{description}</span>
