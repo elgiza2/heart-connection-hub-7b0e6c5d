@@ -1142,7 +1142,9 @@ const AppSidebar = ({
                         style={{
                           borderColor: isActive ? "hsl(var(--primary) / 0.25)" : "transparent",
                         }}
-                        className={`w-full text-left px-3 py-2.5 rounded-xl text-[14.5px] truncate transition-colors border ${
+                        aria-label={conv.title || "Untitled"}
+                        title={conv.title || "Untitled"}
+                        className={`w-full text-start px-3 py-2.5 rounded-xl text-[14.5px] truncate transition-colors border ${
                           isActive
                             ? "bg-primary/10 text-foreground"
                             : "text-foreground/85 hover:bg-foreground/[0.05] hover:text-foreground"
