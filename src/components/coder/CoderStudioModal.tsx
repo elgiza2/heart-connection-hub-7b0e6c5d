@@ -442,7 +442,7 @@ const CoderStudioModal = ({ open, onClose, initialFiles, filesOnly, onFilesChang
                 key={t.id}
                 onClick={() => setTab(t.id)}
                 className={`inline-flex items-center gap-1.5 px-3 h-8 rounded-lg text-[12.5px] font-medium whitespace-nowrap transition-colors ${
-                  tab === t.id ? "bg-white text-background" : "text-foreground/70 hover:bg-foreground/10"
+                  tab === t.id ? "bg-foreground text-background" : "text-foreground/70 hover:bg-foreground/10"
                 }`}
               >
                 <t.icon className="w-3.5 h-3.5" />
@@ -545,7 +545,7 @@ const CoderStudioModal = ({ open, onClose, initialFiles, filesOnly, onFilesChang
                   <button
                     onClick={saveFile}
                     disabled={!dirty}
-                    className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11.5px] font-medium bg-white text-background disabled:opacity-40"
+                    className="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-md text-[11.5px] font-medium bg-foreground text-background disabled:opacity-40"
                   >
                     <Save className="w-3.5 h-3.5" /> Save
                   </button>
@@ -660,7 +660,7 @@ const CoderStudioModal = ({ open, onClose, initialFiles, filesOnly, onFilesChang
                     onClick={() => setConnectorsOpen(true)}
                     className="flex items-center gap-3 p-4 rounded-2xl border border-foreground/15 bg-foreground/5 hover:bg-foreground/10 text-right transition"
                   >
-                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-white text-background">
+                    <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-foreground text-background">
                       <Github className="w-5 h-5" />
                     </span>
                     <span className="flex-1 min-w-0">

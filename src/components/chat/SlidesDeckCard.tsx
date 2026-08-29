@@ -702,7 +702,7 @@ const SlidesDeckCard = ({ deck, hideCard = false, autoOpen = false, onClose }: P
                     onClick={() => setOrientation("horizontal")}
                     aria-label="Horizontal scroll"
                     title="Horizontal"
-                    className={`h-8 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition ${orientation === "horizontal" ? "bg-white text-foreground" : "text-foreground/70 hover:text-foreground"}`}
+                    className={`h-8 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition ${orientation === "horizontal" ? "bg-foreground/10 text-foreground" : "text-foreground/70 hover:text-foreground"}`}
                   >
                     <MoveHorizontal className="w-3.5 h-3.5" />
                   </button>
@@ -710,7 +710,7 @@ const SlidesDeckCard = ({ deck, hideCard = false, autoOpen = false, onClose }: P
                     onClick={() => setOrientation("vertical")}
                     aria-label="Vertical scroll"
                     title="Vertical"
-                    className={`h-8 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition ${orientation === "vertical" ? "bg-white text-foreground" : "text-foreground/70 hover:text-foreground"}`}
+                    className={`h-8 px-2.5 rounded-full text-xs font-medium flex items-center gap-1.5 transition ${orientation === "vertical" ? "bg-foreground/10 text-foreground" : "text-foreground/70 hover:text-foreground"}`}
                   >
                     <MoveVertical className="w-3.5 h-3.5" />
                   </button>

@@ -513,8 +513,8 @@ const PricingPage = () => {
         html[data-theme="light"] [data-pricing-scope] [class*="text-foreground/"] { color: hsl(var(--foreground)) !important; }
         html[data-theme="light"] [data-pricing-scope] .bg-background,
         html[data-theme="light"] [data-pricing-scope] [class*="bg-background/"] { background-color: hsl(var(--background)) !important; }
-        html[data-theme="light"] [data-pricing-scope] [class*="bg-white/"] { background-color: hsl(var(--muted)) !important; }
-        html[data-theme="light"] [data-pricing-scope] [class*="border-white/"] { border-color: hsl(var(--border)) !important; }
+        html[data-theme="light"] [data-pricing-scope] [class*="bg-foreground/"] { background-color: hsl(var(--muted)) !important; }
+        html[data-theme="light"] [data-pricing-scope] [class*="border-foreground/"] { border-color: hsl(var(--border)) !important; }
         html[data-theme="light"] [data-pricing-scope] .liquid-glass {
           background: hsl(var(--card)) !important;
           box-shadow: 0 1px 2px rgba(0,0,0,0.04), inset 0 0 0 1px hsl(var(--border)) !important;
