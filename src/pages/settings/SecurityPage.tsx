@@ -70,6 +70,7 @@ const SecurityPage = () => (
     />
     <LandingNavbar />
 
+    <main>
     <section className="max-w-5xl mx-auto px-5 pt-24 pb-10">
       <motion.div
         initial={{ opacity: 0, y: 24 }}
