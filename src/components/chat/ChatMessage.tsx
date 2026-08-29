@@ -886,6 +886,8 @@ const ChatMessage = ({
     const closeWhenOutsideMenu = (event: PointerEvent | TouchEvent) => {
       const target = event.target as Node | null;
       if (target && mobileMenuRef.current?.contains(target)) return;
+      // Taps on the bubble itself are handled by its own toggle.
+      if (target && userBubbleRef.current?.contains(target)) return;
       setMenuOpen(false);
     };
 
