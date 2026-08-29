@@ -792,6 +792,9 @@ export async function runChatStreamTurn(opts: RunChatStreamTurnOptions): Promise
             const result: any = payload?.result;
             if (result?.paywall || result?.error) videoGenerationActive = false;
           }
+          pushNarration(
+            `${payload.ok ? "✓" : "✕"} ${prettyToolLabel(payload.name, payload.target)}`,
+          );
           setToolActivity((prev) =>
             prev && prev.name === payload.name
               ? { ...prev, status: payload.ok ? "done" : "error" }
