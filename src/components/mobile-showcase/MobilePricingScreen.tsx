@@ -408,13 +408,13 @@ export default function MobilePricingScreen({
             style={{ color: c.faint }}
             aria-label="Legal"
           >
-            <Link to="/terms" className="px-1 py-1 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
+            <Link to="/terms" className="inline-flex min-h-11 items-center px-2 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
               {t.terms}
             </Link>
-            <Link to="/privacy" className="px-1 py-1 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
+            <Link to="/privacy" className="inline-flex min-h-11 items-center px-2 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
               {t.privacy}
             </Link>
-            <Link to="/restore" className="px-1 py-1 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
+            <Link to="/restore" className="inline-flex min-h-11 items-center px-2 transition-opacity hover:opacity-70" style={{ color: c.faint }}>
               {t.restore}
             </Link>
           </nav>
