@@ -150,6 +150,7 @@ html.light {
   --overlay-white-95: rgba(23, 23, 26, 0.92);
   --overlay-white-100: #17171a;
   --overlay-black-22: rgba(23, 23, 26, 0.06);
+  --overlay-black-35: rgba(23, 23, 26, 0.08);
   --overlay-black-50: rgba(23, 23, 26, 0.10);
   --overlay-black-55: rgba(23, 23, 26, 0.12);
 }
