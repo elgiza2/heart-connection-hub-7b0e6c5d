@@ -503,7 +503,7 @@ const LandingNavbar = () => {
         {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="text-sm font-bold uppercase tracking-wider text-foreground md:hidden"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center text-sm font-bold uppercase tracking-wider text-foreground md:hidden"
         >
           {mobileOpen ? tx("Close") : tx("Menu")}
         </button>
