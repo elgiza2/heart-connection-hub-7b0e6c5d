@@ -11,7 +11,6 @@ export function SkillsHeroGlassCard({ onTry }: { onTry: () => void }) {
   return (
     <div
       className="relative overflow-hidden rounded-[24px] mb-5 bg-card text-card-foreground border border-border"
-      dir="rtl"
 
     >
       <div
@@ -104,7 +103,6 @@ export function SkillsAddMenu({
             style={{
               borderTop: "1px solid hsl(var(--border))",
             }}
-            dir="rtl"
           >
             <Drawer.Title className="sr-only">Add skill</Drawer.Title>
             <Drawer.Description className="sr-only">

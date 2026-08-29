@@ -29,7 +29,7 @@ export default function ToolsList({
   if (tools.length === 0) return null;
 
   return (
-    <div dir="ltr" className="mt-6">
+    <div className="mt-6">
       <div className="flex items-center justify-between px-2 pb-1">
         <p className="text-[12.5px] text-foreground/65">{title}</p>
         <span className="text-[12.5px] text-foreground/65">{tools.length}</span>
