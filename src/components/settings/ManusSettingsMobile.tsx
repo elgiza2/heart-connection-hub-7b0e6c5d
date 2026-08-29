@@ -219,7 +219,7 @@ const ManusSettingsMobile = () => {
           </section>
 
           <div className="ms-spacer" />
-        </div>
+        </main>
 
         {logoutOpen && (
           <div className="ms-confirm-scrim" role="presentation" onClick={() => setLogoutOpen(false)}>
