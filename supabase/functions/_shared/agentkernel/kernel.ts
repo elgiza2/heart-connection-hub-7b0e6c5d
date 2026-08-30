@@ -762,6 +762,8 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
   /** Real failure carried into the next decision so the model recovers instead of repeating. */
   let recovery: { tool: string; failureClass: string; observation: string } | null = null;
   let transientRetries = 0;
+  /** Human-readable print of the previous action, used by loop instructions. */
+  let lastActionPrint = "";
 
   for (let i = 0; i < STEPS_PER_TICK && Date.now() < deadline; i += 1) {
     const { data: control } = await supabase
@@ -792,7 +794,7 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
           steering ? `The user changed direction at this safe checkpoint: ${steering}\nFollow it now.` : null,
           guidance ? `The user queued this for the next work cycle: ${guidance}\nAccount for it now.` : null,
           strikes >= 1
-            ? `${loopInstruction(verdictFor(strikes))}\nYour last action produced nothing new. Change your approach — different tool, different input.`
+            ? `${loopInstruction(verdictFor(strikes), lastActionPrint)}\nYour last action produced nothing new. Change your approach — different tool, different input.`
             : null,
           recovery
             ? [
@@ -872,6 +874,7 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
       .update({ last_fingerprint: print, loop_strikes: strikes })
       .eq("id", current.id);
     current = { ...current, last_fingerprint: print, loop_strikes: strikes, step_count: stepCount };
+    lastActionPrint = print;
     await checkpoint(supabase, current, stepCount, print, `${action.tool}`, {
       tool: action.tool,
       input: guardedTool ? { redacted: true } : action.input,
@@ -883,7 +886,10 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
         status: "recovering",
         step_id: stepId,
         summary: `The last attempt at ${describeAction(action.tool, action.input)} changed nothing — switching approach`,
-        metadata: { strikes, directive: loopInstruction(verdictFor(strikes)) },
+        metadata: {
+          strikes,
+          directive: loopInstruction(verdictFor(strikes), describeAction(action.tool, action.input)),
+        },
       });
     }
     if (verdictFor(strikes) === "ask_user") {
