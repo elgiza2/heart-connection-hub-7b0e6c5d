@@ -1,3 +1,4 @@
+/** @doc long-run — durable long-running agent job API (start, poll, cancel). */
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { handleLongRun, type LongRunPayload } from "./core.ts";
 

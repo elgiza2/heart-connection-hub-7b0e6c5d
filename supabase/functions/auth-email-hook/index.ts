@@ -1,3 +1,4 @@
+/** @doc auth-email-hook — renders and delivers Supabase auth emails via our SMTP. */
 /**
  * Supabase Auth "Send Email" hook — every signup / verification / recovery
  * email is rendered with the clean Megsy template and delivered over our own

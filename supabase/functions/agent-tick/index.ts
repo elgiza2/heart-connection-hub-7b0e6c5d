@@ -1,3 +1,4 @@
+/** @doc agent-tick — server-side heartbeat that advances durable agent runs. */
 /**
  * Server-side heartbeat for the agent kernel.
  *

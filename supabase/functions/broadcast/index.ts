@@ -1,3 +1,4 @@
+/** @doc broadcast — admin-only, secret-protected broadcast mailer. */
 /**
  * Megsy broadcast mailer (admin-only, secret protected).
  *
