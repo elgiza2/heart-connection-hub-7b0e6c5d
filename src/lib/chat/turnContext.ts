@@ -65,11 +65,18 @@ export function notifyTurnContextChanged() {
   }
 }
 
+/** Warm the cache in the background so the next send skips these queries. */
+export function prewarmTurnContext() {
+  void fetchTurnContext().catch(() => undefined);
+}
+
 export async function fetchTurnContext(): Promise<TurnContext> {
   let userId: string | null = null;
   try {
-    const { data } = await supabase.auth.getUser();
-    userId = data.user?.id ?? null;
+    // getSession reads the locally cached session; getUser would add an auth
+    // round-trip before every single message.
+    const { data } = await supabase.auth.getSession();
+    userId = data.session?.user?.id ?? null;
   } catch {
     userId = null;
   }
