@@ -218,6 +218,16 @@ async function checkpoint(
     last_action: lastAction.slice(0, 500),
     state,
   });
+  await supabase.from("long_run_events").insert({
+    run_id: run.id,
+    type: "log",
+    title: `Checkpoint saved after step ${stepNumber}`,
+    event_type: "TASK_CHECKPOINTED",
+    step_id: `${run.id}:${stepNumber}`,
+    status: "checkpointed",
+    summary: `Checkpoint saved after step ${stepNumber}`,
+    metadata: redactDeep({ last_action: lastAction.slice(0, 200) }) as Record<string, unknown>,
+  });
 }
 
 async function lastCheckpoint(supabase: SupabaseClient, runId: string) {
@@ -1326,7 +1336,14 @@ async function resumeAfterSandboxLoss(supabase: SupabaseClient, run: RunRow): Pr
         updated_at: new Date().toISOString(),
       })
       .eq("id", run.id);
-    await addEvent(supabase, run.id, "Browser session restarted — resuming from last checkpoint", "status");
+    await addEvent(
+      supabase,
+      run.id,
+      "Browser session restarted — resuming from last checkpoint",
+      "status",
+      null,
+      { event_type: "TASK_RESUMED", status: "resumed" },
+    );
     const { data } = await supabase.from("long_runs").select("*").eq("id", run.id).single();
     return data ?? run;
   } catch (error) {
