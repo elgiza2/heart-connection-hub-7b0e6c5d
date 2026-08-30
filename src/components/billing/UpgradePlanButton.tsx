@@ -107,12 +107,12 @@ export function UpgradePlanButton({ variant = "full", className, hideCredits = f
       }}
       className={cn(
         "upgrade-plan-btn group relative inline-flex items-center gap-2 shrink-0",
-        "h-9 rounded-full font-semibold select-none bg-transparent border-0 shadow-none",
+        "h-11 md:h-9 rounded-full font-semibold select-none bg-transparent border-0 shadow-none",
         "text-[12.5px] leading-none tracking-[-0.01em] text-foreground",
         "transition-all duration-200 ease-out hover:opacity-90",
         "active:scale-[0.985]",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60",
-        variant === "compact" ? "w-9 justify-center p-0" : "px-1.5",
+        variant === "compact" ? "w-11 md:w-9 justify-center p-0" : "px-1.5",
         className,
       )}
     >
