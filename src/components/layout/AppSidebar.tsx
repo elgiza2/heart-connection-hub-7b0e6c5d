@@ -539,7 +539,7 @@ const AppSidebar = ({
         {inline && (
           <button
             onClick={toggleCollapsed}
-            className="w-9 h-9 grid place-items-center rounded-full transition active:scale-90"
+            className="w-11 h-11 grid place-items-center rounded-full transition active:scale-90"
             style={{ color: TEXT, border: "none", backgroundColor: "transparent" }}
             aria-label="Toggle sidebar"
             title={isCollapsed ? "Expand" : "Collapse"}
@@ -1239,7 +1239,7 @@ const AppSidebar = ({
                 <button
                   type="button"
                   onClick={() => navigateSmoothly("/pricing")}
-                  className="theme-fixed mobile-sidebar-footer-action flex items-center justify-center shrink-0 h-9 w-9 rounded-full transition-transform active:scale-95"
+                  className="theme-fixed mobile-sidebar-footer-action flex items-center justify-center shrink-0 h-11 w-11 rounded-full transition-transform active:scale-95"
                   title="Get Pro"
                   aria-label="Get Pro"
                 >

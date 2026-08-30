@@ -252,7 +252,7 @@ export default function ComposerModelMenu({
         className={
           variant === "segment"
             ? `${glassModelMenu.triggerSegment} justify-center ${triggerClassName || ""}`
-            : `group inline-flex h-9 max-w-[62vw] items-center justify-center gap-1 rounded-full px-1 text-[16px] font-semibold text-foreground hover:text-foreground active:scale-95 transition-all outline-none ${triggerClassName || ""}`
+            : `group inline-flex h-11 md:h-9 max-w-[62vw] items-center justify-center gap-1 rounded-full px-1 text-[16px] font-semibold text-foreground hover:text-foreground active:scale-95 transition-all outline-none ${triggerClassName || ""}`
         }
         style={
           variant === "segment"
