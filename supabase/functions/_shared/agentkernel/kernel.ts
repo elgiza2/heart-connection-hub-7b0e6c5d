@@ -16,6 +16,15 @@ import { askUser, detectBlock, detectLargeAmount, openQuestion, resolveQuestion 
 import { classifyPlanRisk, critique, makePlan, savePlanReview } from "./planner.ts";
 import { webSearch } from "./tools.ts";
 import { type AgentAction, decideNextAction, runTool } from "./executor.ts";
+import {
+  type ActivityEvent,
+  classifyFailure,
+  describeAction,
+  emitActivity,
+  redactDeep,
+  toolFamily,
+} from "./activity.ts";
+
 
 const BU_BASE = Deno.env.get("BROWSER_USE_API_BASE") || "https://api.browser-use.com/api/v2";
 const MAX_REVIEW_ROUNDS = 3;
