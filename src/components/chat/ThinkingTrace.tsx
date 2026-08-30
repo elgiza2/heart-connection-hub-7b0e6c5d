@@ -1,11 +1,19 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import {
+  ChevronDown,
+  FileText,
+  Globe,
+  Image as ImageIcon,
+  Plug,
+  Search,
+  Terminal,
+} from "lucide-react";
 import MegsyStar from "@/components/branding/MegsyStar";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { t as uiT, useUserLang } from "@/lib/authI18n";
 
 export interface ThinkingTraceProps {
-  /** Rotating / live status line shown while the model is still working. */
+  /** Live status line — always the real current operation, never a placeholder. */
   status?: string;
   /** Ordered narration steps (deep research, tools, slides, media…). */
   steps?: string[];
@@ -13,6 +21,8 @@ export interface ThinkingTraceProps {
   text?: string;
   /** True while the turn is still running. */
   active?: boolean;
+  /** Real tool family currently executing — drives the row icon. */
+  tool?: string | null;
   /** Start expanded (rarely needed — collapsed is the default look). */
   defaultOpen?: boolean;
   className?: string;
@@ -20,32 +30,35 @@ export interface ThinkingTraceProps {
 
 const RTL_LANGS = new Set(["ar", "ar-eg", "fa", "he"]);
 
-// Fallback phases so the badge is never frozen on a single word while we wait
-// for the backend. They advance with elapsed time, so the badge always moves.
-const PHASES: Array<{ after: number; en: string; ar: string }> = [
-  { after: 0, en: "Reading your request…", ar: "بقرأ طلبك…" },
-  { after: 3, en: "Thinking it through…", ar: "بفكر في الحل…" },
-  { after: 8, en: "Gathering what's needed…", ar: "بجمع المعلومات المطلوبة…" },
-  { after: 14, en: "Working on the details…", ar: "بشتغل على التفاصيل…" },
-  { after: 22, en: "Checking the answer…", ar: "براجع الإجابة…" },
-  { after: 32, en: "Almost there…", ar: "قربت أخلّص…" },
-];
+/** Existing icon set, mapped onto the real tool that is running. */
+const TOOL_ICONS: Record<string, typeof Globe> = {
+  browser: Globe,
+  code: Terminal,
+  files: FileText,
+  mcp: Plug,
+  integration: Plug,
+  search: Search,
+  image: ImageIcon,
+};
 
 /**
  * The single "AI thinking" surface used across chat, deep research, slides,
  * media and tool turns. Borderless, quiet grey, collapsible — the Megsy star
- * stays as the marker of the row. The headline follows real live activity
- * (status events, tool calls, reasoning) and falls back to elapsed-time
- * phases so it never looks stuck.
+ * stays as the marker of the row. The headline is always a real backend signal
+ * (activity events, tool calls, reasoning); there is no timed or rotating
+ * placeholder, so a quiet moment shows the last real operation instead of a
+ * fabricated one.
  */
 const ThinkingTrace = ({
   status,
   steps,
   text,
   active,
+  tool,
   defaultOpen,
   className = "",
 }: ThinkingTraceProps) => {
+
   const lang = useUserLang();
   const [open, setOpen] = useState(!!defaultOpen);
   const rtl = RTL_LANGS.has(lang);
