@@ -251,7 +251,52 @@ export async function streamChat({
     origOnDelta(chunk);
   };
 
+  // ── Fast lane ───────────────────────────────────────────────────────────
+  // Simple, tool-free turns go to the lightweight `chat-fast` function first
+  // (no turn-context pre-flight). The fast model escalates by itself when the
+  // turn actually needs tools/tasks, and we then fall through to the full path.
   try {
+    const fast = await import("@/lib/chat/fastChat");
+    if (
+      fast.isFastLaneEligible({
+        messages,
+        chatMode,
+        deepResearch,
+        searchEnabled,
+        computerUseEnabled,
+        activeAgent,
+        activeSkill,
+      })
+    ) {
+      const outcome = await fast.tryFastChat({
+        messages,
+        authToken: await getAccessToken(),
+        fingerprint: getAnonFingerprint(),
+        signal,
+        onDelta,
+        onModel,
+        onUsage,
+      });
+      if (outcome === "answered") {
+        await onDone();
+        return;
+      }
+    }
+  } catch (e: any) {
+    if (e?.name === "AbortError") {
+      await onDone();
+      return;
+    }
+    if (receivedAnyContent) {
+      onError?.("The reply was interrupted. You can ask me to continue.");
+      await onDone();
+      return;
+    }
+    /* fall through to the full chat path */
+  }
+
+  try {
+
     let completed = false;
     // Everything below is pre-flight work: it must all finish before the first
     // byte can be requested, so it runs in parallel instead of sequentially.
