@@ -142,11 +142,24 @@ export async function addEvent(
   title: string,
   type = "log",
   detail?: string | null,
+  extra?: Partial<ActivityEvent>,
 ) {
-  await supabase
-    .from("long_run_events")
-    .insert({ run_id: runId, type, title, detail: detail ?? null });
+  await supabase.from("long_run_events").insert({
+    run_id: runId,
+    type,
+    title,
+    detail: detail ?? null,
+    event_type: extra?.event_type ?? null,
+    step_id: extra?.step_id ?? null,
+    tool: extra?.tool ? toolFamily(extra.tool) : null,
+    action: extra?.action ?? null,
+    status: extra?.status ?? null,
+    summary: title,
+    progress: typeof extra?.progress === "number" ? extra.progress : null,
+    metadata: (extra?.metadata ? redactDeep(extra.metadata) : null) as Record<string, unknown> | null,
+  });
 }
+
 
 async function notify(
   supabase: SupabaseClient,
