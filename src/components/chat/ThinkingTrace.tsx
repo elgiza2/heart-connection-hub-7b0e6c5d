@@ -159,8 +159,8 @@ const ThinkingTrace = ({
         )}
 
         <span
-          key={headline}
-          className={`truncate text-[13px] transition-opacity duration-300 ${
+          className={`truncate text-[13px] ${
+
             active ? "ai-shimmer font-medium motion-reduce:animate-none" : "text-muted-foreground"
           }`}
           aria-live="polite"
