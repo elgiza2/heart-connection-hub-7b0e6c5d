@@ -17,21 +17,24 @@ export interface LlmMessage {
   content: string;
 }
 
-async function apiKey(supabase: SupabaseClient): Promise<string> {
+/** Every active text-capable key, least-recently-used first, plus the env key. */
+async function apiKeys(supabase: SupabaseClient): Promise<Array<{ id?: string; key: string }>> {
   const { data } = await supabase
     .from("alibaba_keys")
-    .select("api_key,category")
+    .select("id,api_key,category")
     .eq("status", "active")
     .in("category", ["qwen", "memory", "text"])
     .order("last_used_at", { ascending: true, nullsFirst: true })
-    .limit(1)
-    .maybeSingle();
-  const key =
-    (data as { api_key?: string } | null)?.api_key?.trim() ||
-    Deno.env.get("ALIBABA_API_KEY") ||
-    "";
-  if (!key) throw new Error("no_model_key");
-  return key;
+    .limit(6);
+  const out: Array<{ id?: string; key: string }> = [];
+  for (const row of (data ?? []) as { id?: string; api_key?: string }[]) {
+    const key = row.api_key?.trim();
+    if (key) out.push({ id: row.id, key });
+  }
+  const envKey = Deno.env.get("ALIBABA_API_KEY")?.trim();
+  if (envKey) out.push({ key: envKey });
+  if (!out.length) throw new Error("no_model_key");
+  return out;
 }
 
 /**
@@ -46,35 +49,67 @@ export async function askModel(
   system: string,
   user: string,
 ): Promise<string> {
+  let keys: Array<{ id?: string; key: string }>;
   try {
-    const key = await apiKey(supabase);
-    const response = await fetch(`${BASE}/chat/completions`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [
-          { role: "system", content: system },
-          { role: "user", content: user },
-        ] satisfies LlmMessage[],
-        temperature: 0.2,
-      }),
-    });
-    if (!response.ok) {
-      console.error(`agentkernel llm [${response.status}]: ${await response.text()}`);
-      return "";
-    }
-    const data = (await response.json().catch(() => null)) as
-      | { choices?: { message?: { content?: string } }[] }
-      | null;
-    return data?.choices?.[0]?.message?.content ?? "";
+    keys = await apiKeys(supabase);
   } catch (error) {
-    console.error("agentkernel llm failed", error);
+    console.error("agentkernel llm has no usable key", error);
     return "";
   }
+
+  // Try each active key in turn: a rejected key is a real, recoverable failure,
+  // so it is retired instead of stalling every future tick on the same 401.
+  for (const entry of keys) {
+    try {
+      const response = await fetch(`${BASE}/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${entry.key}`,
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: user },
+          ] satisfies LlmMessage[],
+          temperature: 0.2,
+        }),
+      });
+      if (response.status === 401 || response.status === 403) {
+        console.error(`agentkernel llm key rejected [${response.status}] — retiring key`);
+        if (entry.id) {
+          await supabase
+            .from("alibaba_keys")
+            .update({ status: "invalid" })
+            .eq("id", entry.id);
+        }
+        continue;
+      }
+      if (response.status === 429 || response.status >= 500) {
+        console.error(`agentkernel llm transient [${response.status}] — trying next key`);
+        continue;
+      }
+      if (!response.ok) {
+        console.error(`agentkernel llm [${response.status}]: ${await response.text()}`);
+        return "";
+      }
+      const data = (await response.json().catch(() => null)) as
+        | { choices?: { message?: { content?: string } }[] }
+        | null;
+      const text = data?.choices?.[0]?.message?.content ?? "";
+      if (entry.id) {
+        await supabase
+          .from("alibaba_keys")
+          .update({ last_used_at: new Date().toISOString() })
+          .eq("id", entry.id);
+      }
+      return text;
+    } catch (error) {
+      console.error("agentkernel llm failed", error);
+    }
+  }
+  return "";
 }
 
 /** Same call, parsing the first JSON object/array in the reply. */
