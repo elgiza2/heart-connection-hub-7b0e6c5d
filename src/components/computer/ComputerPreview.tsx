@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronDown, Monitor } from "lucide-react";
 import { useLongRun } from "@/hooks/useLongRun";
 import { clearActiveComputerRun, setActiveComputerRun } from "@/lib/computer/activeRun";
+import ThinkingTrace from "@/components/chat/ThinkingTrace";
 
 /**
  * Computer surface, reduced to two things only:
@@ -93,7 +94,38 @@ export function ComputerPreview({
     summary || rawOutput || (run?.status === "canceled" ? "تم إيقاف المهمة." : null);
 
   const lastStep = events.length ? events[events.length - 1] : null;
-  const thinking = run?.status_text || lastStep?.title || "بفكر…";
+  const thinking = run?.status_text || lastStep?.summary || lastStep?.title || "";
+
+  // Real activity trace: every persisted kernel event, newest last. Nothing is
+  // synthesised here — the badge only ever shows what the backend reported.
+  const traceSteps = useMemo(
+    () =>
+      events
+        .map((e) => (e.summary || e.title || "").trim())
+        .filter((v, i, arr) => v.length > 0 && arr[i - 1] !== v),
+    [events],
+  );
+
+  // Reasoning / observations the kernel attached to its events.
+  const traceText = useMemo(() => {
+    const out: string[] = [];
+    for (const e of events) {
+      const meta = (e.metadata ?? null) as Record<string, unknown> | null;
+      const thought = meta && typeof meta.thought === "string" ? meta.thought.trim() : "";
+      const detail = (e.detail || "").trim();
+      const line = thought || detail;
+      if (line && out[out.length - 1] !== line) out.push(line);
+    }
+    return out.join("\n\n");
+  }, [events]);
+
+  const activeTool = useMemo(() => {
+    for (let i = events.length - 1; i >= 0; i -= 1) {
+      const fam = events[i]?.tool;
+      if (fam) return fam;
+    }
+    return null;
+  }, [events]);
 
   // Last screenshot captured by the agent — keeps the card meaningful after
   // the live view is torn down.
@@ -109,13 +141,15 @@ export function ComputerPreview({
   return (
     <div className="flex flex-col gap-2.5">
       {/* thinking badge — the only status surface in the chat */}
-      {active && !question && (
-        <span className="inline-flex w-fit items-center gap-2 text-[13px] text-muted-foreground">
-          <span className="h-1.5 w-1.5 shrink-0 animate-pulse rounded-full bg-[var(--megsy-blue,#3b82f6)]" />
-          <span className="ai-shimmer truncate motion-reduce:animate-none" aria-live="polite">
-            {thinking}
-          </span>
-        </span>
+      {!question && (
+        <ThinkingTrace
+          active={active}
+          status={thinking}
+          steps={traceSteps}
+          text={traceText}
+          tool={activeTool}
+          className="mb-0"
+        />
       )}
 
       {/* the agent needs a human answer — plain text + one line of input */}
