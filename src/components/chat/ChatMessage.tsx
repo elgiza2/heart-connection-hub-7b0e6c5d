@@ -823,6 +823,10 @@ const ChatMessage = ({
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [previewCode, setPreviewCode] = useState<{ code: string; lang: string } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Viewport-anchored position for the mobile Copy/Edit card. Rendered in a
+  // portal so no ancestor (transform / overflow / RTL flip) can clip or
+  // mis-place it.
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
   const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userBubbleRef = useRef<HTMLDivElement>(null);
