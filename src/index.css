@@ -457,14 +457,17 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
 }
 .ai-shimmer {
   /* One gradient tile = 180px, and the animation shifts by exactly one tile,
-     so the sweep loops seamlessly and stays visible on short strings. */
+     so the sweep loops seamlessly and stays visible on short strings.
+     Base is dimmed and the highlight is a bright, narrow band so the light
+     is clearly visible as it travels through the glyphs. */
   background-image: linear-gradient(
     90deg,
-    hsl(var(--muted-foreground)) 0%,
-    hsl(var(--muted-foreground)) 30%,
-    hsl(var(--foreground)) 50%,
-    hsl(var(--muted-foreground)) 70%,
-    hsl(var(--muted-foreground)) 100%
+    hsl(var(--muted-foreground) / 0.45) 0%,
+    hsl(var(--muted-foreground) / 0.45) 34%,
+    hsl(var(--foreground)) 46%,
+    hsl(var(--foreground)) 54%,
+    hsl(var(--muted-foreground) / 0.45) 66%,
+    hsl(var(--muted-foreground) / 0.45) 100%
   );
   background-size: 180px 100%;
   background-repeat: repeat-x;
@@ -472,8 +475,9 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: ai-shimmer 1.6s linear infinite;
+  animation: ai-shimmer 1.3s linear infinite;
 }
+
 [dir="rtl"] .ai-shimmer {
   animation-name: ai-shimmer-rtl;
 }
