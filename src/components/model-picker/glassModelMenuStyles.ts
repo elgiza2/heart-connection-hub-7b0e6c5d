@@ -35,11 +35,11 @@ export const glassModelMenu = {
   bottomSheet:
     "rounded-t-[28px] border-t border-foreground/15 p-0 text-foreground overflow-hidden",
   triggerPill:
-    "inline-flex items-center gap-1.5 h-8 pl-3 pr-2.5 rounded-full border-0 text-foreground/85 hover:text-foreground active:scale-95 transition-all text-[12.5px] font-semibold",
+    "inline-flex items-center gap-1.5 h-11 md:h-8 pl-3 pr-2.5 rounded-full border-0 text-foreground/85 hover:text-foreground active:scale-95 transition-all text-[12.5px] font-semibold",
   triggerSegment:
     "group inline-flex h-11 w-full max-w-full items-center gap-2.5 pl-1 pr-3 text-[13px] font-semibold text-white rounded-[18px] border-0 transition active:scale-[0.98]",
   triggerLoose:
-    "group inline-flex h-9 max-w-[52vw] items-center gap-2 pl-1 pr-1.5 text-[12.5px] font-semibold text-foreground/90 border-0 hover:text-foreground active:scale-95 transition-all",
+    "group inline-flex h-11 md:h-9 max-w-[52vw] items-center gap-2 pl-1 pr-1.5 text-[12.5px] font-semibold text-foreground/90 border-0 hover:text-foreground active:scale-95 transition-all",
   icon:
     "flex shrink-0 items-center justify-center overflow-hidden border border-foreground/12 bg-foreground/[0.08] backdrop-blur-sm",
   sectionLabel:
