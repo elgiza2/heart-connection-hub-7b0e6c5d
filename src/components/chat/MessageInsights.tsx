@@ -39,12 +39,6 @@ export function MessageInsights({ metadata }: MessageInsightsProps) {
   }
 
   if (usage && (usage.total_tokens || usage.prompt_tokens || usage.completion_tokens)) {
-    const total = usage.total_tokens || (Number(usage.prompt_tokens || 0) + Number(usage.completion_tokens || 0));
-    chips.push(
-      <span key="tokens" className="inline-flex items-center gap-1 rounded-full bg-muted/50 px-2 py-0.5 text-[10px] text-muted-foreground" title={`in ${usage.prompt_tokens ?? 0} / out ${usage.completion_tokens ?? 0}`}>
-        <Sparkles className="h-3 w-3" /> {total.toLocaleString()} tok
-      </span>,
-    );
     const cost = estimateCostUsd(model, usage);
     if (cost !== null) {
       chips.push(
