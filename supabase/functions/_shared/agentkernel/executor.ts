@@ -267,15 +267,15 @@ interface RegistryRow {
   edge_function: string | null;
   description: string | null;
   category: string | null;
-  enabled: boolean | null;
+  is_active: boolean | null;
   input_schema: unknown;
 }
 
 async function registryRows(supabase: SupabaseClient): Promise<RegistryRow[]> {
   const { data } = await supabase
     .from("agent_tools_registry")
-    .select("tool_key,edge_function,description,category,enabled,input_schema")
-    .eq("enabled", true)
+    .select("tool_key,edge_function,description,category,is_active,input_schema")
+    .eq("is_active", true)
     .limit(120);
   return (data ?? []) as RegistryRow[];
 }
