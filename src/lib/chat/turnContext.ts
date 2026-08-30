@@ -42,7 +42,9 @@ const EMPTY: TurnContext = {
 };
 
 const KNOWLEDGE_CHAR_BUDGET = 6000;
-const CACHE_TTL = 45_000;
+// Settings change rarely; a longer TTL keeps the first token fast because a
+// cache hit skips eight round-trips on the critical path of every send.
+const CACHE_TTL = 5 * 60_000;
 
 let cache: { value: TurnContext; at: number; userId: string } | null = null;
 
@@ -63,11 +65,18 @@ export function notifyTurnContextChanged() {
   }
 }
 
+/** Warm the cache in the background so the next send skips these queries. */
+export function prewarmTurnContext() {
+  void fetchTurnContext().catch(() => undefined);
+}
+
 export async function fetchTurnContext(): Promise<TurnContext> {
   let userId: string | null = null;
   try {
-    const { data } = await supabase.auth.getUser();
-    userId = data.user?.id ?? null;
+    // getSession reads the locally cached session; getUser would add an auth
+    // round-trip before every single message.
+    const { data } = await supabase.auth.getSession();
+    userId = data.session?.user?.id ?? null;
   } catch {
     userId = null;
   }

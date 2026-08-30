@@ -21,6 +21,11 @@ const loadSendPath = () => {
     import("@/lib/computer/classifyIntent"),
     import("@/lib/achievements"),
     import("@/lib/streaks"),
+    import("@/lib/chat/turnContext").then((m) => {
+      // Also fill the per-turn settings cache: on a cold send those eight
+      // queries sit in front of the very first token.
+      m.prewarmTurnContext();
+    }),
   ]).catch(() => undefined);
   return warmPromise;
 };

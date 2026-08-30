@@ -253,7 +253,12 @@ export async function streamChat({
 
   try {
     let completed = false;
-    let authToken = await getAccessToken();
+    // Everything below is pre-flight work: it must all finish before the first
+    // byte can be requested, so it runs in parallel instead of sequentially.
+    const tokenPromise = getAccessToken();
+    const turnCtxModPromise = import("@/lib/chat/turnContext");
+    const promptsModPromise = import("@/lib/modelSystemPrompts");
+    const capabilitiesModPromise = import("@/lib/chat/capabilities");
     const fingerprint = getAnonFingerprint();
     // Per-mode + per-model system prompt override (learning mode, model
     // voices, depth/language rules). The edge function uses customSystem
@@ -263,8 +268,9 @@ export async function streamChat({
     let turnCtx: Awaited<ReturnType<typeof import("@/lib/chat/turnContext").fetchTurnContext>> | null = null;
     let turnCtxBrief = "";
     let turnCtxPayload: Record<string, unknown> = {};
+    let authToken = await tokenPromise;
     try {
-      const mod = await import("@/lib/chat/turnContext");
+      const mod = await turnCtxModPromise;
       turnCtx = await mod.fetchTurnContext();
       turnCtxBrief = mod.buildTurnContextBrief(turnCtx);
       turnCtxPayload = mod.turnContextPayload(turnCtx);
@@ -273,7 +279,7 @@ export async function streamChat({
     }
     let customSystem: string | null = null;
     try {
-      const mod = await import("@/lib/modelSystemPrompts");
+      const mod = await promptsModPromise;
       // In Learning mode, inject a compact live-learner signal so the
       // tutor actually adapts (streak, XP, Bloom rung, accuracy, topic).
       let learnState: string | null = null;
@@ -290,7 +296,7 @@ export async function streamChat({
       // otherwise the model answers like the plain site assistant.
       const promptMode = deepResearch ? "deep-research" : chatMode;
       customSystem = mod.buildCustomSystem(promptMode, selectedModel?.id, learnState);
-      const { CAPABILITIES_BRIEF } = await import("@/lib/chat/capabilities");
+      const { CAPABILITIES_BRIEF } = await capabilitiesModPromise;
       customSystem = `${customSystem || ""}\n\n${CAPABILITIES_BRIEF}`.trim();
       if (turnCtxBrief) customSystem = `${customSystem}\n\n${turnCtxBrief}`.trim();
       if (chatMode !== "images" && chatMode !== "video") {
