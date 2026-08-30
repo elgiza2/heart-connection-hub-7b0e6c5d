@@ -6400,30 +6400,54 @@ export type Database = {
       }
       long_run_events: {
         Row: {
+          action: string | null
           created_at: string
           detail: string | null
+          event_type: string | null
           id: string
+          metadata: Json | null
+          progress: number | null
           run_id: string
           screenshot_url: string | null
+          status: string | null
+          step_id: string | null
+          summary: string | null
           title: string
+          tool: string | null
           type: string
         }
         Insert: {
+          action?: string | null
           created_at?: string
           detail?: string | null
+          event_type?: string | null
           id?: string
+          metadata?: Json | null
+          progress?: number | null
           run_id: string
           screenshot_url?: string | null
+          status?: string | null
+          step_id?: string | null
+          summary?: string | null
           title?: string
+          tool?: string | null
           type?: string
         }
         Update: {
+          action?: string | null
           created_at?: string
           detail?: string | null
+          event_type?: string | null
           id?: string
+          metadata?: Json | null
+          progress?: number | null
           run_id?: string
           screenshot_url?: string | null
+          status?: string | null
+          step_id?: string | null
+          summary?: string | null
           title?: string
+          tool?: string | null
           type?: string
         }
         Relationships: [
@@ -6447,11 +6471,13 @@ export type Database = {
           error: string | null
           expires_at: string | null
           external_run_id: string | null
+          failure_class: string | null
           goal: string
           id: string
           kind: string
           last_fingerprint: string | null
           last_heartbeat_at: string
+          last_tool_at: string | null
           live_view_url: string | null
           loop_strikes: number
           needs_input: boolean
@@ -6467,6 +6493,7 @@ export type Database = {
           risk_level: string
           sandbox_generation: number
           sandbox_id: string | null
+          stall_count: number
           status: string
           status_text: string | null
           step_count: number
@@ -6484,11 +6511,13 @@ export type Database = {
           error?: string | null
           expires_at?: string | null
           external_run_id?: string | null
+          failure_class?: string | null
           goal?: string
           id?: string
           kind?: string
           last_fingerprint?: string | null
           last_heartbeat_at?: string
+          last_tool_at?: string | null
           live_view_url?: string | null
           loop_strikes?: number
           needs_input?: boolean
@@ -6504,6 +6533,7 @@ export type Database = {
           risk_level?: string
           sandbox_generation?: number
           sandbox_id?: string | null
+          stall_count?: number
           status?: string
           status_text?: string | null
           step_count?: number
@@ -6521,11 +6551,13 @@ export type Database = {
           error?: string | null
           expires_at?: string | null
           external_run_id?: string | null
+          failure_class?: string | null
           goal?: string
           id?: string
           kind?: string
           last_fingerprint?: string | null
           last_heartbeat_at?: string
+          last_tool_at?: string | null
           live_view_url?: string | null
           loop_strikes?: number
           needs_input?: boolean
@@ -6541,6 +6573,7 @@ export type Database = {
           risk_level?: string
           sandbox_generation?: number
           sandbox_id?: string | null
+          stall_count?: number
           status?: string
           status_text?: string | null
           step_count?: number
