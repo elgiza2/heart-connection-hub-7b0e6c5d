@@ -2217,6 +2217,13 @@ button[data-tier-trigger] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+@media (max-width: 767px) {
+  /* Touch target: keep the model pill at least 44px tall on phones. */
+  button[data-tier-trigger] {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+}
 button[data-tier-trigger]:hover {
   background: hsl(var(--foreground) / 0.08) !important;
   border-color: hsl(var(--foreground) / 0.5) !important;

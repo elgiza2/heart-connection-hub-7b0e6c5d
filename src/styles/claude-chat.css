@@ -265,7 +265,8 @@
 
   /* Model selection pill / plus / modes sizing */
   [data-skin="claude"] [data-tier-trigger] {
-    height: 2.25rem !important;
+    height: 44px !important;
+    min-height: 44px !important;
     padding: 0 0.85rem 0 0.5rem !important;
     border-radius: 9999px !important;
   }
