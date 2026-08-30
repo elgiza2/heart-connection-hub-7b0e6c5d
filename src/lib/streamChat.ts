@@ -296,7 +296,7 @@ export async function streamChat({
       // otherwise the model answers like the plain site assistant.
       const promptMode = deepResearch ? "deep-research" : chatMode;
       customSystem = mod.buildCustomSystem(promptMode, selectedModel?.id, learnState);
-      const { CAPABILITIES_BRIEF } = await import("@/lib/chat/capabilities");
+      const { CAPABILITIES_BRIEF } = await capabilitiesModPromise;
       customSystem = `${customSystem || ""}\n\n${CAPABILITIES_BRIEF}`.trim();
       if (turnCtxBrief) customSystem = `${customSystem}\n\n${turnCtxBrief}`.trim();
       if (chatMode !== "images" && chatMode !== "video") {
