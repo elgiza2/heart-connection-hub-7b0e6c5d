@@ -746,6 +746,9 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
   let current: RunRow = run;
   let strikes = Number(run.loop_strikes ?? 0);
   let stepCount = Number(run.step_count ?? 0);
+  /** Real failure carried into the next decision so the model recovers instead of repeating. */
+  let recovery: { tool: string; failureClass: string; observation: string } | null = null;
+  let transientRetries = 0;
 
   for (let i = 0; i < STEPS_PER_TICK && Date.now() < deadline; i += 1) {
     const { data: control } = await supabase
@@ -1264,6 +1267,7 @@ async function finish(
     status === "done" ? "Task finished" : "Task failed",
     status === "done" ? "status" : "error",
     error ?? output ?? null,
+    { event_type: status === "done" ? "TASK_COMPLETED" : "TASK_FAILED", status },
   );
   await notify(
     supabase,
