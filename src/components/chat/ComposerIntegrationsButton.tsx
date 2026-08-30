@@ -23,7 +23,7 @@ export function ComposerIntegrationsButton({ onClick, label = "Integrations" }: 
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="shrink-0 inline-flex h-9 w-9 items-center justify-center rounded-full border-0 bg-transparent outline-none transition-opacity hover:opacity-80 active:scale-95"
+      className="shrink-0 inline-flex h-11 w-11 md:h-10 md:w-10 items-center justify-center rounded-full border-0 bg-transparent outline-none transition-opacity hover:opacity-80 active:scale-95"
       style={{ background: "transparent", border: 0, boxShadow: "none" }}
     >
       {shown.length === 0 ? (

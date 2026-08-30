@@ -144,7 +144,7 @@ export function ComposerMicButton({ onTranscript, onListeningChange, lang = "ar"
       onClick={() => (listening ? stop() : void start())}
       aria-label={listening ? "Stop recording" : "Voice input"}
       aria-pressed={listening}
-      className="shrink-0 inline-flex w-9 h-9 items-center justify-center rounded-full border-0 bg-transparent outline-none transition-opacity hover:opacity-80 active:scale-95 disabled:opacity-60"
+      className="shrink-0 inline-flex w-11 h-11 md:w-10 md:h-10 items-center justify-center rounded-full border-0 bg-transparent outline-none transition-opacity hover:opacity-80 active:scale-95 disabled:opacity-60"
       style={{ background: "transparent", border: 0, boxShadow: "none" }}
     >
       {busy ? (

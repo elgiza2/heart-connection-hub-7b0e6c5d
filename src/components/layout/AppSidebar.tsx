@@ -539,7 +539,7 @@ const AppSidebar = ({
         {inline && (
           <button
             onClick={toggleCollapsed}
-            className="w-9 h-9 grid place-items-center rounded-full transition active:scale-90"
+            className="w-11 h-11 grid place-items-center rounded-full transition active:scale-90"
             style={{ color: TEXT, border: "none", backgroundColor: "transparent" }}
             aria-label="Toggle sidebar"
             title={isCollapsed ? "Expand" : "Collapse"}
@@ -1207,7 +1207,7 @@ const AppSidebar = ({
               onClick={() => navigateSmoothly(activeUserId ? "/settings" : "/auth")}
               className={
                 activeUserId
-                  ? "theme-fixed mobile-sidebar-footer-action flex min-w-0 items-center gap-2 h-9 pl-1 pr-2 rounded-full text-left transition-transform active:scale-95 w-full"
+                  ? "theme-fixed mobile-sidebar-footer-action flex min-w-0 items-center gap-2 h-11 pl-1 pr-2 rounded-full text-left transition-transform active:scale-95 w-full"
                   : "btn-sunset flex w-full items-center justify-center h-11 px-5 rounded-2xl transition-transform active:scale-95 mb-2"
               }
               title={activeUserId ? "Settings" : "Sign in"}
@@ -1239,7 +1239,7 @@ const AppSidebar = ({
                 <button
                   type="button"
                   onClick={() => navigateSmoothly("/pricing")}
-                  className="theme-fixed mobile-sidebar-footer-action flex items-center justify-center shrink-0 h-9 w-9 rounded-full transition-transform active:scale-95"
+                  className="theme-fixed mobile-sidebar-footer-action flex items-center justify-center shrink-0 h-11 w-11 rounded-full transition-transform active:scale-95"
                   title="Get Pro"
                   aria-label="Get Pro"
                 >
