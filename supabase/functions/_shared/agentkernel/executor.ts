@@ -20,6 +20,8 @@ export type AgentToolName =
   | "write_file"
   | "read_file"
   | "browser_task"
+  | "list_integrations"
+  | "call_registered_tool"
   | "remember"
   | "ask_user"
   | "finish";
@@ -44,6 +46,8 @@ const TOOL_CATALOG = [
   'write_file {"name":"report.md","content":"..."} — save an artifact the user can download. Use it to deliver code, docs, CSVs.',
   'read_file {"path":"..."} — read back an artifact you created.',
   'browser_task {"task":"..."} — hand a browser job (login, forms, clicking, scraping a UI) to the cloud browser.',
+  'list_integrations {} — list the registered app/integration tools available to this user (media, documents, data, external APIs).',
+  'call_registered_tool {"tool_key":"...","input":{}} — execute one of those registered tools for real.',
   'remember {"key":"...","value":"..."} — store a durable fact for future tasks.',
   'ask_user {"question":"...","sensitive":true|false} — STOP and ask. Required for CAPTCHA, OTP/2FA, credentials, payments, irreversible actions, or a genuinely ambiguous goal.',
   'finish {"summary":"what you actually accomplished, with evidence"} — only when the goal is really done.',
@@ -256,6 +260,87 @@ export async function callMcpTool(
   }
 }
 
+/* ------------------------------------------------- registered tools registry */
+
+interface RegistryRow {
+  tool_key: string;
+  edge_function: string | null;
+  description: string | null;
+  category: string | null;
+  is_active: boolean | null;
+  input_schema: unknown;
+}
+
+async function registryRows(supabase: SupabaseClient): Promise<RegistryRow[]> {
+  const { data } = await supabase
+    .from("agent_tools_registry")
+    .select("tool_key,edge_function,description,category,is_active,input_schema")
+    .eq("is_active", true)
+    .limit(120);
+  return (data ?? []) as RegistryRow[];
+}
+
+/** The catalog the model reads before it decides to use an integration. */
+export async function listRegisteredTools(supabase: SupabaseClient): Promise<string> {
+  const rows = await registryRows(supabase);
+  if (!rows.length) return "No registered integration tools are available.";
+  return rows
+    .map((row) => {
+      const schema = row.input_schema && typeof row.input_schema === "object"
+        ? Object.keys(row.input_schema as Record<string, unknown>).slice(0, 10).join(", ")
+        : "";
+      return `- ${row.tool_key}${row.category ? ` [${row.category}]` : ""}: ${
+        row.description ?? "no description"
+      }${schema ? ` (input: ${schema})` : ""}`;
+    })
+    .join("\n")
+    .slice(0, 6000);
+}
+
+/**
+ * Executes a registry-declared tool through its own edge function, using the
+ * service role of this worker. The tool must exist and be enabled — arbitrary
+ * function names from the model are never invoked.
+ */
+export async function callRegisteredTool(
+  supabase: SupabaseClient,
+  userId: string,
+  args: { toolKey: string; payload: Record<string, unknown> },
+): Promise<string> {
+  const rows = await registryRows(supabase);
+  const target = rows.find((row) => row.tool_key === args.toolKey);
+  if (!target) return `Unknown tool "${args.toolKey}". Call list_integrations first.`;
+  const fn = String(target.edge_function ?? "anything-api").replace(/[^a-zA-Z0-9_-]/g, "");
+  if (!fn) return `Tool "${args.toolKey}" has no runnable endpoint.`;
+
+  const base = Deno.env.get("SUPABASE_URL");
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!base || !key) return "Tool runtime is not configured.";
+  const started = Date.now();
+  try {
+    const response = await fetch(`${base}/functions/v1/${fn}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, apikey: key },
+      body: JSON.stringify({ tool_key: args.toolKey, user_id: userId, input: args.payload }),
+    });
+    const text = (await response.text()).slice(0, 6000);
+    await supabase
+      .from("agent_tool_invocations")
+      .insert({
+        user_id: userId,
+        tool_key: args.toolKey,
+        input: args.payload,
+        output: { raw: text.slice(0, 2000) },
+        status: response.ok ? "ok" : "error",
+        latency_ms: Date.now() - started,
+      })
+      .then(() => null, () => null);
+    return response.ok ? text || "(no output)" : `tool failed HTTP ${response.status}: ${text}`;
+  } catch (error) {
+    return `tool failed: ${error instanceof Error ? error.message : String(error)}`;
+  }
+}
+
 /* ------------------------------------------------------------------- runTool */
 
 /**
@@ -281,6 +366,17 @@ export async function runTool(
 
     case "list_mcp_tools":
       return { observation: await listMcpTools(supabase, ctx.userId) };
+
+    case "list_integrations":
+      return { observation: await listRegisteredTools(supabase) };
+
+    case "call_registered_tool":
+      return {
+        observation: await callRegisteredTool(supabase, ctx.userId, {
+          toolKey: String(input.tool_key ?? ""),
+          payload: (input.input as Record<string, unknown>) ?? {},
+        }),
+      };
 
     case "mcp_call":
       return {

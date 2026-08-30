@@ -50,6 +50,15 @@ export interface LongRunEvent {
   detail: string | null;
   screenshot_url: string | null;
   created_at: string;
+  /** Structured activity fields written by the kernel (all optional/legacy-safe). */
+  event_type?: string | null;
+  step_id?: string | null;
+  tool?: string | null;
+  action?: string | null;
+  status?: string | null;
+  summary?: string | null;
+  progress?: number | null;
+  metadata?: Record<string, unknown> | null;
 }
 
 /** A question the agent paused on, waiting for the user. */
