@@ -377,14 +377,14 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
   min-height: 100dvh;
 }
 
-/* Shimmer for AI thinking text */
+/* Shimmer for AI thinking text — fixed-width sweep so short strings shimmer too */
 @keyframes ai-shimmer {
-  0% {
-    background-position: 0% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  from { background-position: 0 0; }
+  to { background-position: 180px 0; }
+}
+@keyframes ai-shimmer-rtl {
+  from { background-position: 0 0; }
+  to { background-position: -180px 0; }
 }
 
 /* Mobile partners marquee — pure CSS so it works inside overflow:hidden */
