@@ -1293,10 +1293,7 @@ const ChatMessage = ({
                   onTouchEnd={clearLongPress}
                   onTouchMove={handleLongPressMove}
                   onTouchCancel={clearLongPress}
-                  onClick={(e) => {
-                    handleBubbleClick(e);
-                    handleBubbleTap();
-                  }}
+                  onClick={handleBubbleClick}
                   style={{
                     background: "var(--user-bubble, #2563eb)",
                     color: "var(--user-bubble-text, #ffffff)",
