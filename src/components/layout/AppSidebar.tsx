@@ -1207,7 +1207,7 @@ const AppSidebar = ({
               onClick={() => navigateSmoothly(activeUserId ? "/settings" : "/auth")}
               className={
                 activeUserId
-                  ? "theme-fixed mobile-sidebar-footer-action flex min-w-0 items-center gap-2 h-9 pl-1 pr-2 rounded-full text-left transition-transform active:scale-95 w-full"
+                  ? "theme-fixed mobile-sidebar-footer-action flex min-w-0 items-center gap-2 h-11 pl-1 pr-2 rounded-full text-left transition-transform active:scale-95 w-full"
                   : "btn-sunset flex w-full items-center justify-center h-11 px-5 rounded-2xl transition-transform active:scale-95 mb-2"
               }
               title={activeUserId ? "Settings" : "Sign in"}
