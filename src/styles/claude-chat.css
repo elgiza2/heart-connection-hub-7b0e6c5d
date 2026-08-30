@@ -551,6 +551,17 @@
   padding: 0 !important;
 }
 
+/* Touch target: the text-only model trigger still needs a 44px tap area on phones. */
+@media (max-width: 767px) {
+  [data-skin="claude"] [data-tier-trigger],
+  [data-skin="claude"] [data-model-trigger],
+  [data-skin="claude"] [data-tier-trigger]:hover,
+  [data-skin="claude"] [data-model-trigger]:hover {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+}
+
 [data-skin="claude"] [data-tier-trigger]::before,
 [data-skin="claude"] [data-tier-trigger]::after,
 [data-skin="claude"] [data-model-trigger]::before,
