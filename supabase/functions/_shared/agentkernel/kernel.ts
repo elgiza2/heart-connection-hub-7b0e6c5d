@@ -35,6 +35,8 @@ const PLAN_ACK_MS = 60_000;
 /** No real event for this long while "running" means the worker stalled. */
 const STALL_MS = 5 * 60_000;
 const MAX_STALLS = 6;
+/** Bounded retries when the planner returns no action at all. */
+const MAX_DECIDE_FAILURES = 5;
 /** Tool calls executed per tick, and the wall-clock ceiling for one tick. */
 const STEPS_PER_TICK = 6;
 const TICK_DEADLINE_MS = 50_000;
@@ -813,7 +815,34 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
     });
 
     if (!action) {
-      await addEvent(supabase, current.id, "مش قدرت أحدد الخطوة الجاية — هجرّب تاني", "log");
+      // The planner produced nothing. That is a real, classifiable failure —
+      // retry a bounded number of times, then stop with the actual blocker
+      // instead of looping on the same empty decision forever.
+      const dead = Number(current.decide_failures ?? 0) + 1;
+      await supabase.from("long_runs").update({ decide_failures: dead }).eq("id", current.id);
+      current = { ...current, decide_failures: dead };
+      await addEvent(
+        supabase,
+        current.id,
+        "مش قدرت أحدد الخطوة الجاية — هجرّب تاني",
+        "log",
+        null,
+        {
+          event_type: "TOOL_FAILED",
+          status: "failed",
+          summary: "Could not decide the next step — the planning model did not answer",
+          metadata: { failure_class: "provider_error", attempts: dead },
+        },
+      );
+      if (dead >= MAX_DECIDE_FAILURES) {
+        await finish(
+          supabase,
+          current,
+          "error",
+          "The planning model is unavailable right now, so the task could not continue. No usable model key answered.",
+        );
+        return { ...current, status: "error" };
+      }
       break;
     }
 
