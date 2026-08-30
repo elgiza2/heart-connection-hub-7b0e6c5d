@@ -105,6 +105,12 @@ export default function DashboardTab() {
         <Stat label="Friends joined" value={String(signups)} />
         <Stat label="Points earned" value={String(points)} />
       </div>
+      {signups > 0 && points === 0 ? (
+        <p className="text-[12.5px] leading-relaxed text-foreground/55">
+          Points are credited once an invited friend confirms their account, so a brand-new signup
+          can show here before its points land.
+        </p>
+      ) : null}
     </div>
   );
 }

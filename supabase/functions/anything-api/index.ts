@@ -1,3 +1,4 @@
+/** @doc anything-api — media/image router deployed under the legacy function name. */
 // media-image router (deployed under the existing `anything-api` function name
 // because new edge functions can't be created from this project; the old
 // deployed `media-image` function ignores model_slug and always uses deapi).

@@ -1,3 +1,4 @@
+/** @doc mail — Megsy internal mail service (send, list, mailbox provisioning). */
 /**
  * Megsy internal mail service.
  *

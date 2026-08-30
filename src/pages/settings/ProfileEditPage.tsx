@@ -210,7 +210,7 @@ const ProfileEditPage = () => {
           <span className="pep-icon-btn" aria-live="polite">{statusIcon}</span>
         </header>
 
-        <main className="pep-main">
+        <section className="pep-main">
           <div className="pep-avatar-wrap">
             <button
               type="button"
@@ -271,7 +271,7 @@ const ProfileEditPage = () => {
           </button>
 
           <div className="pep-spacer" />
-        </main>
+        </section>
 
         <ConfirmDialog
           open={confirmOpen}

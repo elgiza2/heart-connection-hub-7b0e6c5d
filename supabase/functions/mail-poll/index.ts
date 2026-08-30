@@ -1,3 +1,4 @@
+/** @doc mail-poll — IMAP poller fanning catch-all mail into user mailboxes. */
 /**
  * Polls the Hostinger catch-all mailbox over IMAP and fans each message out to
  * the matching Megsy mailbox (`username@megsyai.com`) in `mail_messages`.

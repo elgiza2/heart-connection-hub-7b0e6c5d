@@ -137,7 +137,7 @@ const NotificationsPage = () => {
           <div className="npg-status"><StatusBadge /></div>
         </header>
 
-        <main className="npg-main">
+        <section className="npg-main">
           <div className="npg-section-title">In-app</div>
           <div className="npg-card">
             {APP_TOGGLES.map((t, i) => (
@@ -178,7 +178,7 @@ const NotificationsPage = () => {
           )}
 
           <div className="npg-spacer" />
-        </main>
+        </section>
       </div>
     );
   }

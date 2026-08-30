@@ -170,7 +170,7 @@ export default function CapabilitiesPage() {
         <div />
       </header>
 
-      <main className="px-4 pb-10 max-w-[520px] mx-auto">
+      <section className="px-4 pb-10 max-w-[520px] mx-auto">
         <Card>
           <Row
             title="Artifacts"
@@ -227,7 +227,7 @@ export default function CapabilitiesPage() {
           <RadioRow title="On demand" description="Load when needed. More messages, lower accuracy" value="on_demand" />
           <RadioRow title="Always available" description="Ready from start. Fewer messages, better accuracy" value="always" last />
         </Card>
-      </main>
+      </section>
     </div>
   );
 }

@@ -69,18 +69,26 @@ export async function generateShortTitle(
       .replace(/\s+/g, " ")
       .trim();
     title = title.replace(/[.,!?…]+$/g, "").trim();
-    const words = title.split(/\s+/).filter(Boolean).slice(0, 3);
+    const words = title.split(/\s+/).filter(Boolean).slice(0, 4);
+    // Drop a dangling connector left by the word cut ("... حسابك مش", "... of the").
+    const dangling = new Set([
+      "مش", "في", "من", "على", "عن", "و", "أو", "ما", "لو", "إن",
+      "of", "the", "a", "an", "and", "or", "to", "for", "in", "on", "is", "are",
+    ]);
+    while (words.length > 1 && dangling.has(words[words.length - 1].toLowerCase())) words.pop();
     let finalTitle = words.join(" ").slice(0, 60);
 
-    // Reject junk one-word replies (yes/no/ok in AR/EN) — fall back to a
-    // trimmed excerpt of the user's message instead.
+    // Reject junk replies (yes/no/ok in AR/EN) — including ones that merely
+    // start with a refusal — and fall back to an excerpt of the user's message.
     const junk = new Set([
       "لا", "نعم", "حسنا", "حسناً", "أوك", "اوك", "طيب", "تمام",
       "no", "yes", "ok", "okay", "sure", "hi", "hello", "hey",
     ]);
-    if (!finalTitle || junk.has(finalTitle.trim().toLowerCase())) {
+    const firstWord = (words[0] || "").replace(/[،,.!؟?:]+$/g, "").toLowerCase();
+    if (!finalTitle || junk.has(finalTitle.trim().toLowerCase()) || junk.has(firstWord)) {
       finalTitle = firstMessage.trim().replace(/\s+/g, " ").slice(0, 40);
     }
+
     if (!finalTitle) return;
 
     await supabase.from("conversations").update({ title: finalTitle }).eq("id", convId);

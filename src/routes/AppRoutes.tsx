@@ -268,6 +268,11 @@ export const AppRoutes = ({ currentUserId }: { currentUserId: string | null }) =
     <Route path="/k" element={<KPage />} />
     <Route path="/billing/referrals" element={<Navigate to="/settings/referrals" replace />} />
     <Route path="/referrals" element={<Navigate to="/settings/referrals" replace />} />
+    {/* Sidebar destinations shared as short links must resolve, not 404. */}
+    <Route path="/earn" element={<Navigate to="/settings/referrals" replace />} />
+    <Route path="/mail" element={<Navigate to="/settings/mail" replace />} />
+    <Route path="/settings/general" element={<Navigate to="/settings" replace />} />
+
     <Route path="/integrations" element={<Navigate to="/chat?integrations=1" replace />} />
     <Route path="/integration" element={<Navigate to="/chat?integrations=1" replace />} />
     <Route path="/settings/help" element={<Navigate to="/settings/support/help" replace />} />

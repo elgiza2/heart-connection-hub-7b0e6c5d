@@ -435,7 +435,7 @@ const AnimatedInput = ({
               onClick={onPlusClick}
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 420, damping: 24 }}
-              className="animated-plus-btn shrink-0 inline-flex w-9 h-9 items-center justify-center rounded-full border-0 outline-none text-foreground/70 hover:text-foreground transition-colors"
+              className="animated-plus-btn shrink-0 inline-flex w-11 h-11 md:w-10 md:h-10 items-center justify-center rounded-full border-0 outline-none text-foreground/70 hover:text-foreground transition-colors"
               style={{ boxShadow: "none", background: "transparent", border: 0 }}
               aria-label={uiT("openTools")}
               data-plus-trigger
@@ -469,7 +469,7 @@ const AnimatedInput = ({
                   transition={{ type: "spring", stiffness: 380, damping: 22 }}
                   whileTap={{ scale: 0.9 }}
                   onClick={onCancel}
-                  className="shrink-0 w-9 h-9 md:h-10 md:w-10 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:opacity-90 transition-opacity"
+                  className="shrink-0 w-11 h-11 md:h-10 md:w-10 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:opacity-90 transition-opacity"
                   aria-label={uiT("stopGeneration")}
                 >
                   <Square className="w-3 h-3" fill="currentColor" />
@@ -485,7 +485,7 @@ const AnimatedInput = ({
                   onClick={handleSendWithSlash}
                   disabled={disabled || (!value.trim() && !canSendWithoutText)}
                   data-testid="mobile-composer-send"
-                  className="shrink-0 w-9 h-9 md:h-10 md:w-10 flex items-center justify-center rounded-full bg-foreground text-background shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="shrink-0 w-11 h-11 md:h-10 md:w-10 flex items-center justify-center rounded-full bg-foreground text-background shadow-[0_2px_10px_rgba(0,0,0,0.2)] hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                   aria-label={uiT("sendMessage")}
                 >
                   <ArrowUp className="w-[18px] h-[18px] md:w-4 md:h-4" strokeWidth={2.2} />

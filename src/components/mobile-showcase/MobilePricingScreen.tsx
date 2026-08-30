@@ -11,11 +11,12 @@ import {
   Search,
   Infinity as InfinityIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import MegsyStar from "@/components/branding/MegsyStar";
 import { MobileSidebarButton } from "@/components/shared/MobileSidebarButton";
 import { useUserLang } from "@/lib/authI18n";
+import { useUserPlan } from "@/hooks/useUserPlan";
 import { getDisplayPrice, getPlan, type PlanTier } from "@/data/pricingData";
 import {
   INTRO_PRICE,
@@ -77,6 +78,10 @@ export default function MobilePricingScreen({
   const isLight = useIsLightTheme();
   const compact = useCompactHeight();
   const isLoading = loadingTier === "pro";
+  const navigate = useNavigate();
+  // A subscriber must never be told to "upgrade" to the plan they already own.
+  const { plan } = useUserPlan();
+  const alreadySubscribed = plan === "pro" || plan === "max" || plan === "elite";
 
   // Always exactly 6 rows so the card height (and the CTA position) never
   // shifts when the billing interval changes — only the first row's copy does.
@@ -159,6 +164,15 @@ export default function MobilePricingScreen({
         privacy: "Privacy",
         restore: "Restore",
       };
+
+  if (alreadySubscribed) {
+    const planLabel = plan === "pro" ? "Megsy Pro" : plan === "max" ? "Megsy Max" : "Megsy Elite";
+    t.title = isAr ? `أنت مشترك في ${planLabel}` : `You're on ${planLabel}`;
+    t.cta = isAr ? "إدارة الاشتراك" : "Manage subscription";
+    t.fine = isAr
+      ? "اشتراكك نشط. من إدارة الاشتراك تقدر تغيّر الخطة أو تلغيها في أي وقت."
+      : "Your subscription is active. Change or cancel it anytime from subscription settings.";
+  }
 
   const c = isLight
     ? {
@@ -390,7 +404,7 @@ export default function MobilePricingScreen({
           </p>
           <button
             type="button"
-            onClick={() => onSubscribe("pro")}
+            onClick={() => (alreadySubscribed ? navigate("/settings/billing") : onSubscribe("pro"))}
             disabled={isLoading}
             className={`flex w-full items-center justify-center rounded-[16px] px-6 font-semibold leading-none transition active:scale-[0.99] disabled:opacity-60 ${
               compact ? "h-[46px] text-[14px]" : "h-[50px] text-[15px]"

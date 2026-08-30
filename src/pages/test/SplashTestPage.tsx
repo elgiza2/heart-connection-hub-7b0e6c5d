@@ -1,3 +1,4 @@
+/** @doc SplashTestPage — internal harness for previewing the splash animation. */
 /**
  * SplashTestPage — prototype of the native Android splash (~2.6s).
  *

@@ -156,11 +156,11 @@ export function DesktopSettingsLayout({
           )}
 
           {/* Main */}
-          <main className="flex-1 overflow-y-auto bg-transparent">
+          <div className="flex-1 overflow-y-auto bg-transparent">
             <div className="mx-auto max-w-6xl px-10 py-10 xl:px-12">
               <div className="settings-desktop-content pb-24 text-foreground">{children}</div>
             </div>
-          </main>
+          </div>
         </div>
       </div>
     </AppLayout>

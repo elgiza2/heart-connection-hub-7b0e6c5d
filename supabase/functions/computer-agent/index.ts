@@ -1,3 +1,4 @@
+/** @doc computer-agent — edge runtime for the in-chat Computer Agent. */
 /**
  * Edge function powering the in-chat Computer Agent (Megsy Computer).
  * Mirrors api/computer-agent.ts so the feature works on Lovable hosting,

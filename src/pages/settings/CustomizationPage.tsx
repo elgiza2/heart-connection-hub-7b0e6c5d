@@ -33,7 +33,7 @@ const CustomizationPage = () => {
         <div className="apv2-spacer" />
       </header>
 
-      <main className="apv2-main">
+      <section className="apv2-main">
         {/* Composer */}
         <section className="apv2-section">
           <div className="apv2-section-head">
@@ -68,7 +68,7 @@ const CustomizationPage = () => {
         </section>
 
         <div className="apv2-foot-space" />
-      </main>
+      </section>
     </div>
   );
 };

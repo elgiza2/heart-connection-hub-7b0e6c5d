@@ -348,7 +348,8 @@
     letter-spacing: -0.015em !important;
     font-size: 64px !important;
     line-height: 1.05 !important;
-    color: #FAF7F2 !important;
+    /* Token-based so the greeting stays readable in the light theme too. */
+    color: hsl(var(--foreground)) !important;
     transform: none !important;
     opacity: 1 !important;
     text-rendering: optimizeLegibility;
