@@ -377,14 +377,14 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
   min-height: 100dvh;
 }
 
-/* Shimmer for AI thinking text */
+/* Shimmer for AI thinking text — fixed-width sweep so short strings shimmer too */
 @keyframes ai-shimmer {
-  0% {
-    background-position: 0% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+  from { background-position: 0 0; }
+  to { background-position: 180px 0; }
+}
+@keyframes ai-shimmer-rtl {
+  from { background-position: 0 0; }
+  to { background-position: -180px 0; }
 }
 
 /* Mobile partners marquee — pure CSS so it works inside overflow:hidden */
@@ -456,24 +456,26 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
   100% { background-position: -200% 0; }
 }
 .ai-shimmer {
-  /* Seamless sweep: the gradient is exactly one period wide (200%), so
-     animating background-position by one full tile loops with no jump and
-     the text never loses its background (no invisible frames). */
+  /* One gradient tile = 180px, and the animation shifts by exactly one tile,
+     so the sweep loops seamlessly and stays visible on short strings. */
   background-image: linear-gradient(
     90deg,
-    hsl(var(--foreground) / 0.45) 0%,
-    hsl(var(--foreground) / 0.45) 25%,
-    hsl(var(--foreground) / 1) 50%,
-    hsl(var(--foreground) / 0.45) 75%,
-    hsl(var(--foreground) / 0.45) 100%
+    hsl(var(--muted-foreground)) 0%,
+    hsl(var(--muted-foreground)) 30%,
+    hsl(var(--foreground)) 50%,
+    hsl(var(--muted-foreground)) 70%,
+    hsl(var(--muted-foreground)) 100%
   );
-  background-size: 200% 100%;
+  background-size: 180px 100%;
   background-repeat: repeat-x;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  animation: ai-shimmer 2.2s linear infinite;
+  animation: ai-shimmer 1.6s linear infinite;
+}
+[dir="rtl"] .ai-shimmer {
+  animation-name: ai-shimmer-rtl;
 }
 
 /* Brand logo: silver start → metallic light sweep → white finish */
