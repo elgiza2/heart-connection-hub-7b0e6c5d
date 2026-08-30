@@ -16,6 +16,9 @@ const STRONG_EN = [
   /\bcomputer (use|task)\b/i,
   /\b(open|go to|visit|search (on|in|with))\b[^.\n]{0,20}\b(google|youtube|facebook|twitter|x\.com|gmail|amazon|linkedin|instagram|maps)\b/i,
   /\b(take|grab|capture)\b[^.\n]{0,20}\bscreenshots?\b/i,
+  /\b(search|look up|research|find)\b[^.\n]{0,30}\b(web|internet|online|google|news|prices?)\b/i,
+  /\b(fix|debug|deploy|refactor|implement|connect)\b[^.\n]{0,30}\b(app|project|site|api|mcp|feature|bug|integration)\b/i,
+
 ];
 
 const STRONG_AR = [
@@ -32,7 +35,13 @@ const STRONG_AR = [
   // literal word "موقع".
   /(افتح|ادخل|روح|زور|شغل|دور\s*في|ابحث\s*في|ابحث\s*علي|ابحث\s*على)\s*(لي|لى)?\s*(علي|على|في|ع|ب)?\s*(جوجل|جوجل\s*كروم|google|يوتيوب|youtube|فيسبوك|فيس\s*بوك|facebook|تويتر|twitter|انستجرام|انستقرام|instagram|واتساب|whatsapp|جيميل|gmail|خرائط|maps|امازون|amazon|نون|علي\s*اكسبريس|aliexpress|لينكد\s*ان|linkedin|شات\s*جي\s*بي\s*تي|chatgpt)/i,
   // "ابحث عن كذا على النت / جوجل / اونلاين"
-  /(ابحث|دور|شوف|هات|جيب)\s+.*(جوجل|google|الانترنت|النت|اونلاين|online|يوتيوب|youtube|موقع)/i,
+  /(ابحث|دور|شوف|هات|جيب)\s+.*(جوجل|google|الانترنت|النت|الويب|ويب|web|اونلاين|online|يوتيوب|youtube|موقع)/i,
+  // Broad autonomous objectives: multi-step work the agent must plan and run
+  // itself (research, building, fixing, deploying, integrating).
+  /(اعمل|اجمع|جمع|لخص|حلل|راقب|تابع|قارن)\s+.*(بحث|تقرير|اخبار|اسعار|بيانات|منافسين|سوق)/i,
+  /(اصلح|صلح|ظبط|نفذ|كمل|ابني|انشئ)\s+.*(المشروع|التطبيق|الموقع|الباك|الميزه|الميزة|الخطه|الخطة|المهمه|المهمة)/i,
+  /(اربط|وصل)\s+.*(api|mcp|خدمه|خدمة|تكامل)/i,
+
   /(سكرين\s*شوت|screenshot|لقطه\s*شاشه|صوره\s*للشاشه)/i,
   /(https?:\/\/|www\.)/i,
   /(سجل|سجلي|سجل\s*لي|ادخل|دخلني)\s*(لي|لنا)?\s*(ب|في|علي|على|الى|الي)?\s*(الحساب|حساب|الايميل|الموقع|المنصه|المنصة)/,
