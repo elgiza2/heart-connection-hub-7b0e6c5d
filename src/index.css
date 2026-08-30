@@ -380,10 +380,10 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
 /* Shimmer for AI thinking text */
 @keyframes ai-shimmer {
   0% {
-    background-position: 200% 0;
+    background-position: 0% 0;
   }
   100% {
-    background-position: -200% 0;
+    background-position: 200% 0;
   }
 }
 
@@ -456,15 +456,19 @@ html:not(.dark) .ambient-bg__blob { opacity: 0.10; }
   100% { background-position: -200% 0; }
 }
 .ai-shimmer {
-  background: linear-gradient(
+  /* Seamless sweep: the gradient is exactly one period wide (200%), so
+     animating background-position by one full tile loops with no jump and
+     the text never loses its background (no invisible frames). */
+  background-image: linear-gradient(
     90deg,
     hsl(var(--foreground) / 0.45) 0%,
-    hsl(var(--foreground) / 0.45) 35%,
-    hsl(var(--foreground) / 0.95) 50%,
-    hsl(var(--foreground) / 0.45) 65%,
+    hsl(var(--foreground) / 0.45) 25%,
+    hsl(var(--foreground) / 1) 50%,
+    hsl(var(--foreground) / 0.45) 75%,
     hsl(var(--foreground) / 0.45) 100%
   );
   background-size: 200% 100%;
+  background-repeat: repeat-x;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;

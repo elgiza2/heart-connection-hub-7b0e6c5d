@@ -977,14 +977,6 @@ const ChatMessage = ({
     [clearLongPress],
   );
 
-  // Tap on your own message also opens Copy/Edit — long-press alone is too
-  // hidden on mobile.
-  const handleBubbleTap = useCallback(() => {
-    if (role !== "user") return;
-    if (longPressFiredRef.current) return;
-    setMenuOpen((v) => !v);
-  }, [role]);
-
   const handleContextMenu = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (role !== "user") return;
@@ -1293,10 +1285,7 @@ const ChatMessage = ({
                   onTouchEnd={clearLongPress}
                   onTouchMove={handleLongPressMove}
                   onTouchCancel={clearLongPress}
-                  onClick={(e) => {
-                    handleBubbleClick(e);
-                    handleBubbleTap();
-                  }}
+                  onClick={handleBubbleClick}
                   style={{
                     background: "var(--user-bubble, #2563eb)",
                     color: "var(--user-bubble-text, #ffffff)",
