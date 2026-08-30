@@ -884,6 +884,36 @@ const ChatMessage = ({
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
 
+  // Measure the bubble and clamp the card inside the viewport.
+  useEffect(() => {
+    if (!menuOpen || role !== "user") {
+      setMenuPos(null);
+      return;
+    }
+    const place = () => {
+      const el = userBubbleRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const W = 200;
+      const H = 108;
+      const pad = 10;
+      let left = r.right - W;
+      left = Math.min(Math.max(pad, left), window.innerWidth - W - pad);
+      let top = r.top - H - 8;
+      if (top < pad) top = Math.min(r.bottom + 8, window.innerHeight - H - pad);
+      setMenuPos({ top, left });
+    };
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [menuOpen, role]);
+
+
+
   useEffect(() => {
     if (!menuOpen || role !== "user") return;
 
