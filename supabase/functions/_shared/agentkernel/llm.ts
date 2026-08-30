@@ -11,6 +11,7 @@ const BASE =
   Deno.env.get("ALIBABA_API_BASE") ||
   "https://dashscope-intl.aliyuncs.com/compatible-mode/v1";
 const MODEL = Deno.env.get("AGENT_KERNEL_MODEL") || "qwen-plus";
+const GATEWAY_MODEL = Deno.env.get("AGENT_KERNEL_FALLBACK_MODEL") || "google/gemini-3-flash";
 
 export interface LlmMessage {
   role: "system" | "user" | "assistant";
@@ -77,13 +78,9 @@ export async function askModel(
         }),
       });
       if (response.status === 401 || response.status === 403) {
-        console.error(`agentkernel llm key rejected [${response.status}] — retiring key`);
-        if (entry.id) {
-          await supabase
-            .from("alibaba_keys")
-            .update({ status: "invalid" })
-            .eq("id", entry.id);
-        }
+        // The key is rejected for this endpoint only — other functions may use
+        // it against a different region, so never retire it here.
+        console.error(`agentkernel llm key rejected [${response.status}] — trying next key`);
         continue;
       }
       if (response.status === 429 || response.status >= 500) {
@@ -109,7 +106,41 @@ export async function askModel(
       console.error("agentkernel llm failed", error);
     }
   }
-  return "";
+  return await askGateway(system, user);
+}
+
+/**
+ * Fallback provider: the Lovable AI Gateway. Used only when no Alibaba key
+ * answers, so a rejected or exhausted key never leaves an autonomous task
+ * unable to decide its next step.
+ */
+async function askGateway(system: string, user: string): Promise<string> {
+  const key = Deno.env.get("LOVABLE_API_KEY");
+  if (!key) return "";
+  try {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+      body: JSON.stringify({
+        model: GATEWAY_MODEL,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: user },
+        ] satisfies LlmMessage[],
+      }),
+    });
+    if (!response.ok) {
+      console.error(`agentkernel gateway [${response.status}]: ${await response.text()}`);
+      return "";
+    }
+    const data = (await response.json().catch(() => null)) as
+      | { choices?: { message?: { content?: string } }[] }
+      | null;
+    return data?.choices?.[0]?.message?.content ?? "";
+  } catch (error) {
+    console.error("agentkernel gateway failed", error);
+    return "";
+  }
 }
 
 /** Same call, parsing the first JSON object/array in the reply. */
