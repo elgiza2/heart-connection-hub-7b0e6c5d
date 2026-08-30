@@ -1,3 +1,4 @@
+/** @doc WelcomeShowcasePage — first-run onboarding showcase before the chat. */
 /**
  * WelcomeShowcasePage — first-open onboarding showcase (all devices).
  */
