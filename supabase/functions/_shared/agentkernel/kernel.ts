@@ -495,7 +495,12 @@ export async function beginExecution(
         updated_at: new Date().toISOString(),
       })
       .eq("id", run.id);
-    await addEvent(supabase, run.id, "Computer session started", "status");
+    await addEvent(supabase, run.id, "Computer session started", "status", null, {
+      event_type: "TOOL_STARTED",
+      tool: "browser",
+      status: "running",
+      summary: "Opened a real browser session",
+    });
   } catch (thrown) {
     const message = thrown instanceof Error ? thrown.message : "Failed to start task";
     await supabase.from("long_runs").update({ status: "error", error: message }).eq("id", run.id);
@@ -575,6 +580,13 @@ export async function tickRun(supabase: SupabaseClient, run: RunRow): Promise<Ru
         title: step.nextGoal || step.evaluationPreviousGoal || `Step ${already + index + 1}`,
         detail: [step.evaluationPreviousGoal, step.url].filter(Boolean).join(" · ") || null,
         screenshot_url: step.screenshotUrl ?? null,
+        // Structured mirror so the UI shows the real tool and its live action.
+        event_type: "TOOL_PROGRESS",
+        tool: "browser",
+        status: "running",
+        step_id: String(already + index + 1),
+        summary: step.nextGoal || step.evaluationPreviousGoal || `Browser step ${already + index + 1}`,
+        metadata: { url: step.url ?? null },
       })),
     );
   }
@@ -614,6 +626,13 @@ export async function tickRun(supabase: SupabaseClient, run: RunRow): Promise<Ru
         `Repeated action detected (${strikes}x) — changing approach`,
         "loop",
         latestText,
+        {
+          event_type: "RECOVERY_STARTED",
+          tool: "browser",
+          status: "recovering",
+          summary: `Same action repeated ${strikes}x — switching approach`,
+          metadata: { failure_class: "logical", strikes },
+        },
       );
       if (verdict === "ask_user") {
         await supabase.from("long_runs").update(patch).eq("id", run.id);
@@ -690,7 +709,12 @@ export async function tickRun(supabase: SupabaseClient, run: RunRow): Promise<Ru
 
   await supabase.from("long_runs").update(patch).eq("id", run.id);
   if (mapped !== run.status) {
-    await addEvent(supabase, run.id, "Computer is working", "status");
+    await addEvent(supabase, run.id, "Computer is working", "status", null, {
+      event_type: "TOOL_PROGRESS",
+      tool: "browser",
+      status: mapped,
+      summary: String(patch.status_text ?? "Browser is working"),
+    });
   }
   return { ...run, ...patch };
 }
@@ -1260,7 +1284,12 @@ async function reviewFinished(
           updated_at: new Date().toISOString(),
         })
         .eq("id", run.id);
-      await addEvent(supabase, run.id, "Retrying to finish the job properly", "status", review.critique);
+      await addEvent(supabase, run.id, "Retrying to finish the job properly", "status", review.critique, {
+        event_type: "REPLANNING_STARTED",
+        tool: "browser",
+        status: "recovering",
+        summary: "Self-review failed — retrying with a corrected approach",
+      });
       const { data: retried } = await supabase.from("long_runs").select("*").eq("id", run.id).single();
       return retried ?? run;
     } catch {
