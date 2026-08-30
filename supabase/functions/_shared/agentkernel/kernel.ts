@@ -311,6 +311,11 @@ export async function startRun(
   }
 
   try {
+    await emitActivity(supabase, run.id, {
+      event_type: "TASK_STARTED",
+      summary: `Starting: ${goal.slice(0, 160)}`,
+      metadata: { goal_length: goal.length },
+    });
     // 1 — memory first, exactly like a human recalling the site.
     const memories = await recallMemory(supabase, userId, goal);
     const memory = memoryBlock(memories);
@@ -325,6 +330,10 @@ export async function startRun(
     }
 
     // 2 — plan.
+    await emitActivity(supabase, run.id, {
+      event_type: "PLANNING_STARTED",
+      summary: "Breaking the objective down into a plan",
+    });
     const plan = await makePlan(supabase, run, memory);
     const riskLevel = classifyPlanRisk(goal);
     const autoContinueAllowed = riskLevel === "low";
@@ -359,6 +368,7 @@ export async function startRun(
       "دي الخطة اللي هأمشي عليها",
       "plan",
       planText || String(run.goal ?? ""),
+      { event_type: "PLAN_UPDATED", metadata: { steps: plan.steps.length, risk: riskLevel } },
     );
     const { data: pending } = await supabase
       .from("long_runs")
@@ -766,7 +776,18 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
           steering ? `The user changed direction at this safe checkpoint: ${steering}\nFollow it now.` : null,
           guidance ? `The user queued this for the next work cycle: ${guidance}\nAccount for it now.` : null,
           strikes >= 1
-            ? "Your last action produced nothing new. Change your approach — different tool, different input."
+            ? `${loopInstruction(verdictFor(strikes))}\nYour last action produced nothing new. Change your approach — different tool, different input.`
+            : null,
+          recovery
+            ? [
+                `Your last action (${recovery.tool}) failed. Failure class: ${recovery.failureClass}.`,
+                `Raw failure: ${recovery.observation}`,
+                recovery.failureClass === "transient"
+                  ? "It looks temporary: retry the same approach once."
+                  : recovery.failureClass === "authorization"
+                    ? "Recover authentication first, or ask the user only if a credential is genuinely missing."
+                    : "Do NOT repeat it as-is: diagnose the current state first, then use a different selector, a different tool, an API/MCP path, or a different sequence.",
+              ].join("\n")
             : null,
         ]
           .filter(Boolean)
@@ -785,19 +806,35 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
       : null;
     if (actionBlock) {
       await askUser(supabase, { id: current.id, user_id: current.user_id }, actionBlock);
-      await addEvent(supabase, current.id, "وقفت قبل إجراء مؤثر وبستنى موافقتك", "approval", actionBlock.reason);
+      await addEvent(
+        supabase,
+        current.id,
+        "وقفت قبل إجراء مؤثر وبستنى موافقتك",
+        "approval",
+        actionBlock.reason,
+        { event_type: "WAITING_FOR_USER", tool: action.tool, status: "blocked" },
+      );
       await notify(supabase, current, "المهمة محتاجة موافقتك", actionBlock.question);
       const { data } = await supabase.from("long_runs").select("*").eq("id", current.id).single();
       return (data as RunRow) ?? current;
     }
 
     stepCount += 1;
+    const stepId = `${current.id}:${stepCount}`;
     await addEvent(
       supabase,
       current.id,
-      action.say || action.thought || action.tool,
+      action.say || describeAction(action.tool, action.input),
       "act",
       `${action.tool} ${redactToolInput(action.tool, action.input)}`,
+      {
+        event_type: "TOOL_STARTED",
+        tool: action.tool,
+        action: action.tool,
+        status: "running",
+        step_id: stepId,
+        metadata: { thought: action.thought, input: action.input },
+      },
     );
     await supabase
       .from("long_runs")
@@ -805,7 +842,7 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
         status: "running",
         phase: "working",
         step_count: stepCount,
-        status_text: (action.say || action.thought || action.tool).slice(0, 240),
+        status_text: (action.say || describeAction(action.tool, action.input)).slice(0, 240),
         last_heartbeat_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -823,8 +860,24 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
       tool: action.tool,
       input: guardedTool ? { redacted: true } : action.input,
     });
+    if (strikes >= 1) {
+      await emitActivity(supabase, current.id, {
+        event_type: "RECOVERY_STARTED",
+        tool: action.tool,
+        status: "recovering",
+        step_id: stepId,
+        summary: `The last attempt at ${describeAction(action.tool, action.input)} changed nothing — switching approach`,
+        metadata: { strikes, directive: loopInstruction(verdictFor(strikes)) },
+      });
+    }
     if (verdictFor(strikes) === "ask_user") {
-      await addEvent(supabase, current.id, `تكرار متكرر (${strikes}x) — محتاج توجيه`, "loop");
+      await addEvent(supabase, current.id, `تكرار متكرر (${strikes}x) — محتاج توجيه`, "loop", null, {
+        event_type: "WAITING_FOR_USER",
+        tool: action.tool,
+        status: "blocked",
+        step_id: stepId,
+        metadata: { strikes },
+      });
       await askUser(supabase, { id: current.id, user_id: current.user_id }, {
         question: `أنا عالق: "${action.tool}" مش بيوصلني لحاجة جديدة. أعمل إيه؟`,
         reason: "loop",
@@ -907,13 +960,72 @@ export async function tickAgentic(supabase: SupabaseClient, run: RunRow): Promis
       { runId: current.id, userId: current.user_id },
       action,
     );
+    const failed = /^(error|sandbox unavailable|could not|timed out|mcp (error|call failed)|unsupported tool|no code provided|file not found)/i
+      .test(outcome.observation.trim());
+    const failureClass = failed ? classifyFailure(outcome.observation) : null;
     await addEvent(
       supabase,
       current.id,
-      outcome.artifact ? `أنتجت ${outcome.artifact.name}` : `نتيجة ${action.tool}`,
+      outcome.artifact
+        ? `Produced ${outcome.artifact.name}`
+        : failed
+          ? `${describeAction(action.tool, action.input)} did not succeed — diagnosing`
+          : `Finished: ${describeAction(action.tool, action.input)}`,
       "observation",
       outcome.observation.slice(0, 4000),
+      {
+        event_type: failed ? "TOOL_FAILED" : "TOOL_COMPLETED",
+        tool: action.tool,
+        action: action.tool,
+        status: failed ? "failed" : "done",
+        step_id: stepId,
+        metadata: { failure_class: failureClass, artifact: outcome.artifact ?? null },
+      },
     );
+    if (failureClass) {
+      await supabase.from("long_runs").update({ failure_class: failureClass }).eq("id", current.id);
+      recovery = { tool: action.tool, failureClass, observation: outcome.observation.slice(0, 600) };
+      if (failureClass === "human_required" || failureClass === "unsafe") {
+        await askUser(supabase, { id: current.id, user_id: current.user_id }, {
+          question: `I hit a blocker I cannot pass on my own while trying to ${describeAction(action.tool, action.input)}. How should I proceed?`,
+          reason: failureClass,
+          sensitive: false,
+        });
+        await emitActivity(supabase, current.id, {
+          event_type: "WAITING_FOR_USER",
+          tool: action.tool,
+          status: "blocked",
+          summary: "Blocked by something only you can resolve — waiting for you",
+        });
+        const { data } = await supabase.from("long_runs").select("*").eq("id", current.id).single();
+        return (data as RunRow) ?? current;
+      }
+      if (failureClass === "transient") {
+        await emitActivity(supabase, current.id, {
+          event_type: "RECOVERY_STARTED",
+          tool: action.tool,
+          status: "retrying",
+          summary: `Temporary failure — waiting a moment and retrying ${describeAction(action.tool, action.input)}`,
+          metadata: { failure_class: failureClass },
+        });
+        await new Promise((r) => setTimeout(r, Math.min(4000 * (transientRetries + 1), 12_000)));
+        transientRetries += 1;
+        if (transientRetries > 3) {
+          recovery = { tool: action.tool, failureClass: "terminal", observation: outcome.observation.slice(0, 600) };
+        }
+      } else {
+        await emitActivity(supabase, current.id, {
+          event_type: "RECOVERY_STARTED",
+          tool: action.tool,
+          status: "recovering",
+          summary: `Diagnosing why ${describeAction(action.tool, action.input)} failed, then trying another way`,
+          metadata: { failure_class: failureClass },
+        });
+      }
+    } else {
+      transientRetries = 0;
+      recovery = null;
+    }
     // Deliverables are collected on the run so the chat can offer them for download.
     if (outcome.artifact) {
       const { data: row } = await supabase
@@ -949,7 +1061,10 @@ async function reviewAgentic(
     .from("long_runs")
     .update({ phase: "reviewing", status_text: REVIEW_TEXT, updated_at: new Date().toISOString() })
     .eq("id", run.id);
-  await addEvent(supabase, run.id, REVIEW_TEXT, "status", summary || null);
+  await addEvent(supabase, run.id, REVIEW_TEXT, "status", summary || null, {
+    event_type: "VERIFICATION_STARTED",
+    status: "verifying",
+  });
 
   const plan = await planOf(supabase, run.plan_id);
   const planSteps: string[] = Array.isArray(plan?.steps?.steps) ? plan!.steps.steps : [];
@@ -962,7 +1077,11 @@ async function reviewAgentic(
     round,
   });
   await savePlanReview(supabase, String(run.plan_id ?? ""), round, review);
-  await addEvent(supabase, run.id, `مراجعة ذاتية: ${review.verdict}`, "review", review.critique);
+  await addEvent(supabase, run.id, `مراجعة ذاتية: ${review.verdict}`, "review", review.critique, {
+    event_type: review.verdict === "pass" ? "VERIFICATION_PASSED" : "VERIFICATION_FAILED",
+    status: review.verdict,
+    metadata: { round },
+  });
   await supabase.from("long_runs").update({ review_round: round }).eq("id", run.id);
 
   if (review.verdict === "ask" && review.question) {
@@ -983,6 +1102,7 @@ async function reviewAgentic(
       "المراجعة كشفت نقص — برجع أكمّل صح",
       "answer",
       [review.critique, review.fix_instruction].filter(Boolean).join("\n"),
+      { event_type: "REPLANNING_STARTED", status: "replanning", metadata: { round } },
     );
     await supabase
       .from("long_runs")
@@ -1024,7 +1144,10 @@ async function reviewFinished(
     .from("long_runs")
     .update({ phase: "reviewing", status_text: REVIEW_TEXT, updated_at: new Date().toISOString() })
     .eq("id", run.id);
-  await addEvent(supabase, run.id, REVIEW_TEXT, "status", output);
+  await addEvent(supabase, run.id, REVIEW_TEXT, "status", output, {
+    event_type: "VERIFICATION_STARTED",
+    status: "verifying",
+  });
 
 
 
@@ -1037,7 +1160,11 @@ async function reviewFinished(
     round,
   });
   await savePlanReview(supabase, String(run.plan_id ?? ""), round, review);
-  await addEvent(supabase, run.id, `Self-review: ${review.verdict}`, "review", review.critique);
+  await addEvent(supabase, run.id, `Self-review: ${review.verdict}`, "review", review.critique, {
+    event_type: review.verdict === "pass" ? "VERIFICATION_PASSED" : "VERIFICATION_FAILED",
+    status: review.verdict,
+    metadata: { round },
+  });
 
   if (review.verdict === "ask" && review.question) {
     await supabase.from("long_runs").update({ review_round: round }).eq("id", run.id);
