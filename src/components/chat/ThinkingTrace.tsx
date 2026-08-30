@@ -121,7 +121,8 @@ const ThinkingTrace = ({
   const hasBody = lines.length > 0;
   const label = active ? uiT("thinking", lang) : uiT("thoughts", lang);
 
-  // Live headline: newest real signal wins; otherwise an elapsed-time phase.
+  // Live headline: newest real signal wins. With no signal yet we keep the
+  // neutral label instead of inventing progress.
   const headline = useMemo(() => {
     if (!active) return label;
     const live =
@@ -130,11 +131,11 @@ const ThinkingTrace = ({
       reasoningLines[reasoningLines.length - 1] ||
       "";
     if (live) return live.length > 90 ? `${live.slice(0, 90)}…` : live;
-    let phase = PHASES[0];
-    for (const p of PHASES) if (elapsed >= p.after) phase = p;
-    return isAr ? phase.ar : phase.en;
+    return label;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, status, elapsed, label, isAr, reasoningLines, historyRef.current.length]);
+  }, [active, status, label, reasoningLines, historyRef.current.length]);
+
+  const ToolIcon = tool ? TOOL_ICONS[tool] : undefined;
 
   // Nothing to show at all.
   if (!hasBody && !active) return null;
@@ -148,10 +149,15 @@ const ThinkingTrace = ({
         className="flex w-full items-center gap-2 py-0.5 text-start"
       >
         {active ? (
-          <MegsyStar className="h-3.5 w-3.5 shrink-0 text-[var(--megsy-blue)] motion-safe:animate-pulse" />
+          ToolIcon ? (
+            <ToolIcon className="h-3.5 w-3.5 shrink-0 text-[var(--megsy-blue)] motion-safe:animate-pulse" />
+          ) : (
+            <MegsyStar className="h-3.5 w-3.5 shrink-0 text-[var(--megsy-blue)] motion-safe:animate-pulse" />
+          )
         ) : (
           <BrandLogo className="h-3.5 w-3.5 shrink-0" />
         )}
+
         <span
           key={headline}
           className={`truncate text-[13px] transition-opacity duration-300 ${
