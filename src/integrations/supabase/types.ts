@@ -6468,6 +6468,7 @@ export type Database = {
           budget_ms: number
           conversation_id: string | null
           created_at: string
+          decide_failures: number
           error: string | null
           expires_at: string | null
           external_run_id: string | null
@@ -6508,6 +6509,7 @@ export type Database = {
           budget_ms?: number
           conversation_id?: string | null
           created_at?: string
+          decide_failures?: number
           error?: string | null
           expires_at?: string | null
           external_run_id?: string | null
@@ -6548,6 +6550,7 @@ export type Database = {
           budget_ms?: number
           conversation_id?: string | null
           created_at?: string
+          decide_failures?: number
           error?: string | null
           expires_at?: string | null
           external_run_id?: string | null
