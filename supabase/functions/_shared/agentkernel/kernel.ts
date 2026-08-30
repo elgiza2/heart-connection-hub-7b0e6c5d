@@ -32,6 +32,9 @@ const DEFAULT_BUDGET_MS = 6 * 60 * 60 * 1000;
 const MAX_STEPS = 600;
 /** How long the user gets to press "Continue" before the agent proceeds itself. */
 const PLAN_ACK_MS = 60_000;
+/** No real event for this long while "running" means the worker stalled. */
+const STALL_MS = 5 * 60_000;
+const MAX_STALLS = 6;
 /** Tool calls executed per tick, and the wall-clock ceiling for one tick. */
 const STEPS_PER_TICK = 6;
 const TICK_DEADLINE_MS = 50_000;
@@ -1479,9 +1482,41 @@ export async function tickAllRuns(supabase: SupabaseClient, limit = 25): Promise
   const runs = (data ?? []) as RunRow[];
   for (const run of runs) {
     try {
-      await tickRun(supabase, run);
+      // Stall detection: a running task that has not produced a real event for
+      // STALL_MS is resumed from its last checkpoint instead of hanging forever.
+      const beat = run.last_heartbeat_at ? Date.parse(String(run.last_heartbeat_at)) : 0;
+      const stalled = run.status === "running" && beat > 0 && Date.now() - beat > STALL_MS;
+      if (stalled) {
+        const stalls = Number(run.stall_count ?? 0) + 1;
+        await supabase.from("long_runs").update({ stall_count: stalls }).eq("id", run.id);
+        if (stalls > MAX_STALLS) {
+          await finish(
+            supabase,
+            run,
+            "error",
+            "The task stopped making progress and could not be resumed automatically.",
+          );
+          continue;
+        }
+        const point = await lastCheckpoint(supabase, run.id);
+        await emitActivity(supabase, run.id, {
+          event_type: "TASK_RESUMED",
+          status: "resumed",
+          summary: point
+            ? `No progress for a while — resuming from checkpoint ${point.step_number}`
+            : "No progress for a while — restarting the current step",
+          metadata: { stalls, last_action: point?.last_action ?? null },
+        });
+      }
+      await tickRun(supabase, { ...run, stall_count: run.stall_count ?? 0 });
     } catch (error) {
       console.error(`tick failed for run ${run.id}`, error);
+      await emitActivity(supabase, run.id, {
+        event_type: "TOOL_FAILED",
+        status: "failed",
+        summary: "A worker step crashed — recovering from the last checkpoint",
+        metadata: { failure_class: classifyFailure(error instanceof Error ? error.message : "") },
+      }).catch(() => null);
     }
   }
   return runs.length;
