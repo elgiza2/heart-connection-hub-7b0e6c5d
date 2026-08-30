@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect, useDeferredValue, memo, lazy, Suspense, Component as ReactComponent } from "react";
+import { createPortal } from "react-dom";
 import { PrefetchLink as Link } from "@/components/common/PrefetchLink";
 
 import { GlassSheet, GlassSheetContent } from "@/components/ui/glass-sheet";
