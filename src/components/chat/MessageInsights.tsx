@@ -1,4 +1,4 @@
-import { Brain, Coins, Cpu, Sparkles } from "lucide-react";
+import { Brain, Coins, Cpu } from "lucide-react";
 import { estimateCostUsd, formatCostUsd } from "@/lib/modelCosts";
 
 interface Usage {
