@@ -16,6 +16,9 @@ const STRONG_EN = [
   /\bcomputer (use|task)\b/i,
   /\b(open|go to|visit|search (on|in|with))\b[^.\n]{0,20}\b(google|youtube|facebook|twitter|x\.com|gmail|amazon|linkedin|instagram|maps)\b/i,
   /\b(take|grab|capture)\b[^.\n]{0,20}\bscreenshots?\b/i,
+  /\b(search|look up|research|find)\b[^.\n]{0,30}\b(web|internet|online|google|news|prices?)\b/i,
+  /\b(fix|debug|deploy|refactor|implement|connect)\b[^.\n]{0,30}\b(app|project|site|api|mcp|feature|bug|integration)\b/i,
+
 ];
 
 const STRONG_AR = [
