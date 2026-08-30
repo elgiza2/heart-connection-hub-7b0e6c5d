@@ -257,7 +257,7 @@ export default function ComposerModelMenu({
         style={
           variant === "segment"
             ? glassModelMenuTriggerStyle
-            : { background: "transparent", border: 0, boxShadow: "none" }
+            : { background: "transparent", border: 0, boxShadow: "none", minHeight: 44 }
         }
         aria-label="Choose model"
         aria-expanded={open}
