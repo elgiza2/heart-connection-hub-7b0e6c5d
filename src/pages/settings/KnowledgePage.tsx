@@ -111,7 +111,7 @@ const KnowledgePage = () => {
         </button>
       </header>
 
-      <main className="kn-main">
+      <section className="kn-main">
         {loading ? (
           <div className="kn-state">
             <Loader2 className="w-5 h-5 animate-spin" />
@@ -145,7 +145,7 @@ const KnowledgePage = () => {
             ))}
           </ul>
         )}
-      </main>
+      </section>
 
       {sheetOpen && (
         <div className="kn-sheet-wrap">

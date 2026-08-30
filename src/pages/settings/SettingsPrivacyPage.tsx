@@ -126,11 +126,11 @@ export default function SettingsPrivacyPage() {
           <div className="w-11" />
         </header>
 
-        <main className="privacy-main">
+        <section className="privacy-main">
           <DataPrivacyCard />
           <div className="h-4" />
           <ExportDataCard />
-        </main>
+        </section>
       </div>
     </div>
   );
