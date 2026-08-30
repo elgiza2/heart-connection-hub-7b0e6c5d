@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo, useRef, useEffect, useDeferredValue, memo, lazy, Suspense, Component as ReactComponent } from "react";
+import { createPortal } from "react-dom";
 import { PrefetchLink as Link } from "@/components/common/PrefetchLink";
 
 import { GlassSheet, GlassSheetContent } from "@/components/ui/glass-sheet";
@@ -822,6 +823,10 @@ const ChatMessage = ({
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [previewCode, setPreviewCode] = useState<{ code: string; lang: string } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
+  // Viewport-anchored position for the mobile Copy/Edit card. Rendered in a
+  // portal so no ancestor (transform / overflow / RTL flip) can clip or
+  // mis-place it.
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
   const longPressRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const userBubbleRef = useRef<HTMLDivElement>(null);
@@ -878,6 +883,36 @@ const ChatMessage = ({
   };
 
   const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  // Measure the bubble and clamp the card inside the viewport.
+  useEffect(() => {
+    if (!menuOpen || role !== "user") {
+      setMenuPos(null);
+      return;
+    }
+    const place = () => {
+      const el = userBubbleRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const W = 200;
+      const H = 108;
+      const pad = 10;
+      let left = r.right - W;
+      left = Math.min(Math.max(pad, left), window.innerWidth - W - pad);
+      let top = r.top - H - 8;
+      if (top < pad) top = Math.min(r.bottom + 8, window.innerHeight - H - pad);
+      setMenuPos({ top, left });
+    };
+    place();
+    window.addEventListener("resize", place);
+    window.addEventListener("scroll", place, true);
+    return () => {
+      window.removeEventListener("resize", place);
+      window.removeEventListener("scroll", place, true);
+    };
+  }, [menuOpen, role]);
+
+
 
   useEffect(() => {
     if (!menuOpen || role !== "user") return;
@@ -1325,51 +1360,54 @@ const ChatMessage = ({
                     </PopoverContent>
                   </Popover>
                 </div>
-                {/* Mobile long-press menu — floating liquid-glass card anchored
-                    to the top-right of the bubble (Claude-style). */}
-                {menuOpen && (
-                  <>
-                    <div
-                      className="md:hidden fixed inset-0 z-40"
-                      onClick={closeMenu}
-                      onTouchStart={closeMenu}
-                      aria-hidden
-                    />
-                    <div
-                      ref={mobileMenuRef}
-                      role="menu"
-                      dir="ltr"
-                      className="md:hidden absolute right-0 z-50 min-w-[190px] rounded-ios-lg p-1.5 bg-popover/95 text-popover-foreground border border-border shadow-[0_18px_44px_-16px_rgba(0,0,0,0.45)] backdrop-blur-2xl animate-in fade-in-0 zoom-in-95 duration-150"
-                      style={{ bottom: "calc(100% + 8px)" }}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <button
-                        onClick={async (e) => {
-                          e.stopPropagation();
-                          await handleCopy();
-                          closeMenu();
-                        }}
-                        className="w-full flex items-center gap-3 px-3.5 h-11 rounded-ios-md text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                        role="menuitem"
+                {/* Mobile long-press menu — rendered in a portal and anchored to
+                    the bubble in viewport coordinates so nothing can clip it. */}
+                {menuOpen && menuPos &&
+                  createPortal(
+                    <div className="md:hidden">
+                      <div
+                        className="fixed inset-0 z-[70]"
+                        onClick={closeMenu}
+                        onTouchStart={closeMenu}
+                        aria-hidden
+                      />
+                      <div
+                        ref={mobileMenuRef}
+                        role="menu"
+                        dir="ltr"
+                        className="fixed z-[71] w-[200px] rounded-2xl p-1.5 bg-popover text-popover-foreground border border-border shadow-[0_18px_44px_-16px_hsl(var(--foreground)/0.45)] animate-in fade-in-0 zoom-in-95 duration-150"
+                        style={{ top: menuPos.top, left: menuPos.left }}
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <Copy className="w-[18px] h-[18px] shrink-0" strokeWidth={1.8} />
-                        <span className="text-[15px] font-medium text-left flex-1">Copy</span>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditAction();
-                          closeMenu();
-                        }}
-                        className="w-full flex items-center gap-3 px-3.5 h-11 rounded-ios-md text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
-                        role="menuitem"
-                      >
-                        <Pencil className="w-[18px] h-[18px] shrink-0" strokeWidth={1.8} />
-                        <span className="text-[15px] font-medium text-left flex-1">Edit</span>
-                      </button>
-                    </div>
-                  </>
-                )}
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleCopy();
+                            closeMenu();
+                          }}
+                          className="w-full flex items-center gap-3 px-3.5 h-11 rounded-xl text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                          role="menuitem"
+                        >
+                          <Copy className="w-[18px] h-[18px] shrink-0" strokeWidth={1.8} />
+                          <span className="text-[15px] font-medium text-left flex-1">Copy</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditAction();
+                            closeMenu();
+                          }}
+                          className="w-full flex items-center gap-3 px-3.5 h-11 rounded-xl text-popover-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+                          role="menuitem"
+                        >
+                          <Pencil className="w-[18px] h-[18px] shrink-0" strokeWidth={1.8} />
+                          <span className="text-[15px] font-medium text-left flex-1">Edit</span>
+                        </button>
+                      </div>
+                    </div>,
+                    document.body,
+                  )}
+
               </div>
             );
           })()}
